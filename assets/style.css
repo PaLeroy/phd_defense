@@ -1,9 +1,11 @@
-@import url(https://fonts.googleapis.com/css?family=Lato:400,900);
+@import url(https://fonts.googleapis.com/css?family=Lato:300,400,900);
+@import url(https://fonts.googleapis.com/css?family=Roboto:300,400,900);
 
 body {
-    font-family:  'Lato', 'Avenir Next', 'Avenir', 'Trebuchet MS', 'Segoe UI', sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family:  'Roboto', 'Segoe UI', sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-weight: 300;
+    line-height: 1.5; 
     color: #354046; /*#455a64;*/
-    line-height: 1.4;
     font-size: 11pt;
     word-wrap: break-word;
 }
@@ -12,24 +14,26 @@ body {
 /* Remark ------------------------------------------------------------------- */
 
 .remark-container {
-    background: #ddd;
+    background: #eee;
 }
 
 .remark-slide-content {
     font-size: 1.4em;
-    border-top: solid 5px #20707e;
+
 }
 
 .remark-slide-content h1 {
+    font-family: Lato, sans-serif;
     font-weight: bold;
-    font-size: 2.25em;
+    font-size: 2em;
     margin: 0 0 .5em 0;
     color: #17525d;
 }
 
 .remark-slide-content h2 {
-    font-size: 1.1em;
+    font-family: Lato, sans-serif;
     font-weight: bold;
+    font-size: 1.2em;
     margin: 0 0 .5em 0;
 }
 
@@ -44,6 +48,11 @@ body {
     bottom: 2em;
 }
 
+.remark-slide-scaler {
+    box-shadow: 0 0 20px #ccc; 
+}
+
+
 
 /* Styles ------------------------------------------------------------------- */
 
@@ -53,7 +62,7 @@ body {
 }
 
 a {
-    color: #0288d1;
+    color: #5b82b5;
     text-decoration: none;
 }
 
@@ -65,7 +74,7 @@ a:hover {
     color: #d11a01;
 }
 
-.Q {
+.Q, .green {
     color: #009933;
 }
 
@@ -85,31 +94,44 @@ em {
 strong {
     color: #d11a01;
     font-style: normal;
-    font-weight: normal;
+    font-weight: 300;
 }
 
 .highlight{ 
     background-color: #FFFF00; 
 }
 
-.smaller {
+.smaller, .smaller .katex {
     font-size: 1.2em;
 }
 
-.smaller-x {
+.smaller2, .smaller2 .katex {
+    font-size: 1.0em;
+}
+
+.smaller-x, .smaller-x .katex{
     font-size: 0.8em;
 }
 
 .smaller-xx {
-    font-size: 0.5em;
+    font-size: 0.7em;
+}
+
+.smaller-xxx {
+    font-size: 0.4em;
 }
 
 .katex {
-    color: #1a7082;
+    color: #17525d;
+    font-size: 18pt;
 }
 
-.black-slide .katex, .black-slide h1, .black-slide a {
+.black-slide .katex, .black-slide h1 {
     color: white;
+}
+
+.black-slide a, .black-slide .footnote a {
+    color: #89c2ce;
 }
 
 .remark-code, .remark-inline-code {
@@ -190,6 +212,17 @@ td {
   border-style: dashed;
 }
 
+.avatars {
+    position: absolute;
+    right: 1em;
+    top: 1em;
+}
+
+.avatars img {
+    width: 2.5em;
+    border-radius: 50%;
+}
+
 .footnote {
   position: absolute;
   bottom: 2em;
@@ -219,6 +252,15 @@ td {
     content: "Exercise";
     font-weight: bold;
     display: block;
+}
+
+.question, .success {
+    background-color: rgba(40,167,69,0.25);
+    border: 2px solid rgb(40,167,69);
+    border-radius: 5px;
+    width: 95%;
+    display: block;
+    padding: 1em;
 }
 
 .alert {
@@ -316,6 +358,10 @@ td {
     width: 90%;
 }
 
+.width-93 * {
+    width: 93.7%;
+}
+
 .width-95 * {
     width: 95%;
 }
@@ -410,12 +456,12 @@ td {
 .title-slide:after {
     content: '';
     background: url("../assets/logo_ulg.png") no-repeat;
-    background-size: 100% 100%;
+    background-size: 75% 75%;
     width: 150px;
     height: 73px;
     position: absolute;
-    bottom: 2em;
-    left: 3.3em;
+    bottom: -0.5em;
+    left: 0.5em;
     display: inline-block;
 }
 
@@ -424,7 +470,7 @@ td {
 }
 
 .end-slide {
-    background-color: #20707e;
+    background-color: #17525d;
     color: white;
     vertical-align: middle;
 }
@@ -439,4 +485,9 @@ td {
     background-color: red;
     color: white;
     border-top: solid 0px;
+}
+
+.shadow {
+    background-color: rgba(0,0,0,0.75);
+    padding: 10px;
 }
