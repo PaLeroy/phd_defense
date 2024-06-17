@@ -659,7 +659,7 @@ P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environmen
 
 # IMP  representation
 
-imp_intro.pdf
+.center.width-100[![](figures/imp_intro.png)]
 
 ---
 
@@ -684,41 +684,63 @@ imp_intro.pdf
 ---
 
 # IMP variations
-fig2_mul/environments_v2_a.pdf
-fig2_mul/environments_v2_b.pdf
-fig2_mul/environments_v2_c.pdf
-fig2_mul/environments_v2_d.pdf
+.grid[
+.kol-1-2[
+.center.width-100[![](figures/environments_v2_a.png)A k-out-of-n system environment.]
+]
+.kol-1-2[
+.center.width-100[![](figures/environments_v2_b.png)An offshore wind farm environment.]
+]]
+
+.grid[
+.kol-1-2[
+.center.width-100[![](figures/environments_v2_c.png)Uncorrelated and correlated initial damage distribution.]
+]
+.kol-1-2[
+.center.width-100[![](figures/environments_v2_d.png)A campaign cost environment.]
+]]
+
 
 ---
 
 # IMP performance
-Results are reported as boxplost against the expert rule-based heuristic policy.
-plot_explain_plot_gaussian_2.pdf
-Box plot construction for one setting with 10 seeds.
 
-Box plots are created with the best teams of each 10 seeds.
-box_plot_small_dec.pdf
-Performance plot with two different number of agents in three settings.
+Results are reported as boxplot against the expert rule-based heuristic policy.
+
+.center.width-100[![](figures/plot_explain_plot_gaussian_2.png)Box plot construction for one setting with 10 seeds.]
+
 
 
 ---
 
-boxplot_perc_limit_up.pdf
-
-Performance as normalised discounted rewards with respect to expert-based heuristic policies in all IMP environments, H referring to the heuristics result.
 Every boxplot gathers the best policies from each of 10 executed training realisations, indicating the 25th-75th percentile range, median, minimum, and maximum obtained results.
-%The coloured boxplots are grouped per method, vertically arranging environments with an increasing number of $n$ agents, as indicated in the top-left legend boxes.
+
+.center.width-100[![](figures/box_plot_small_dec.png)Performance plot with two different number of agents in three settings.]
+
+
+Vertically arranging environments with an increasing number of $n$ agents
+
 Note that the results are clipped at -100\%.
 
 
 ---
 
-boxplot_perc_limit_down.pdf
+.center.width-100[![](figures/boxplot_perc_limit_up.png)]
 
-Performance as normalised discounted rewards with respect to expert-based heuristic policies in all IMP environments, H referring to the heuristics result.
-Every boxplot gathers the best policies from each of 10 executed training realisations, indicating the 25th-75th percentile range, median, minimum, and maximum obtained results.
-%The coloured boxplots are grouped per method, vertically arranging environments with an increasing number of $n$ agents, as indicated in the top-left legend boxes.
-Note that the results are clipped at -100\%.
+---
+
+.center.width-100[![](figures/boxplot_perc_limit_down.png)]
+
+---
+
+# Results:
+
+- MARL-based strategies outperform expert-based heuristic policies.
+- IMP challenge.
+- Campaign cost environments.
+- Centralised RL methods do not scale with the number of agents.
+- IMP demands cooperation among agents.
+- Overall, CTDE methods generate more effective IMP policies than the other investigated methods.
 
 ---
 
@@ -729,12 +751,9 @@ Note that the results are clipped at -100\%.
 
 - Centralised RL methods do not scale well with the number of agents.
 
-- IMP environments demand cooperation among agents: \\ CTDE $>>$ Decentralised.
+- IMP environments demand cooperation among agents: CTDE $>>$ Decentralised.
 
 - Remaining challenges: correlated environments and campaign costs.
-
-
-
 
 
 
