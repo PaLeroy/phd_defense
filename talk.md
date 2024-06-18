@@ -88,19 +88,9 @@ An .bold[MDP] is defined by a tuple ($\mathcal{S}$, $\mathcal{U}$,${P}$,${R}$):
 
 .center[.width-100[![](figures/MDP_words.png)]]
 
-
----
-class: middle
-
-Agent selects action $u$ in state $s$ based on its deterministic policy $\pi(s) : \mathcal{S} \rightarrow \mathcal{U}$.
-
-.bold[Goal]: learn the policy $\pi$ that maximises the sum of rewards $\mathbb{E}_{\pi} \left[ \sum_t r_t \right]$.
-
-.center[.width-100[![](figures/MDP_words.png)]]
-
 ---
 
-# How to reach the nest?
+# Chicken-MDP
 
 .center[.width-70[![](figures/chicken_env.png)]]
 
@@ -120,6 +110,17 @@ Agent selects action $u$ in state $s$ based on its deterministic policy $\pi(s) 
     - +1 if it reaches the nest in (4, 4),
     - -1 if it reaches the fox in (2, 4),
     - 0 otherwhise.
+
+---
+# How to reach the nest?
+
+Agent selects action $u$ in state $s$ based on its deterministic policy $\pi(s) : \mathcal{S} \rightarrow \mathcal{U}$.
+
+.bold[Goal]: learn the policy $\pi$ that maximises $\mathbb{E}_{\pi} \left[ \sum_t \gamma^t r_t \right]$, the sum of discounted reward.
+
+$\gamma \in [0, 1]$ encourages direct reward.
+
+.center[.width-100[![](figures/MDP_words.png)]]
 
 
 ---
@@ -142,14 +143,14 @@ For example, the best action in $(3, 4)$ is to go up to reach the nest.
 - $R(s\_{t+1})$ provides the reward obtained in $s_{t+1}$.
 
 - Repeat this from the initial state state $s_0$ to obtain the return of the policy
-$$ G\_0 = \sum\_t r\_t  = r\_0 + r\_1 + .. + r\_t$$
+$$ G\_0 = \sum\_t \gamma^t r\_t  = r\_0 + \gamma r\_1 + .. + \gamma^t r\_t$$
 
 --
 
-- This is the .bold[state value function!]
-$$ V^{\pi}(s) = \mathbb{E}\_{\pi} \left[ \sum\_t r\_t | s\_t = s \right] $$
+- This is the .bold[state value function]
+$$ V^{\pi}(s) = \mathbb{E}\_{\pi} \left[ \sum\_t \gamma^t r\_t | s\_t = s \right] $$
 
-    The expected sum of reward from the state $s$ by following the policy $\pi$.
+    The expected sum of discounted reward from the state $s$ by following the policy $\pi$.
 
 ---
 
@@ -157,7 +158,7 @@ $$ V^{\pi}(s) = \mathbb{E}\_{\pi} \left[ \sum\_t r\_t | s\_t = s \right] $$
 
 - We can evaluate policies given a state:
 
-    $$ V^{\pi}(s\_t) = R(s\_{t+1}) + V^\pi(s\_{t+1})$$
+    $$ V^{\pi}(s\_t) = R(s\_{t+1}) + \gamma V^\pi(s\_{t+1})$$
     where $s\_{t+1} = P(s\_t, \pi(s\_t)) $
 
 - The optimal policy $\pi^*$ is the one maximising the value function:
@@ -174,16 +175,21 @@ Can we do better?
 ---
 # Consider action !
 
-- Evaluate the return given a state $s$ and .bold[an action] $u$!
-- This is the .bold[state action value function!]:
+- Instead of comparing two policies, compare actions.
+- Evaluate the return given a state $s$ and .bold[an action] $u$.
+- This is the .bold[state action value function]:
 
-$$ Q^{\pi}(s\_t, u\_t) = R(s\_{t+1}) + V^\pi(s\_{t+1}) \text{ where } s\_{t+1} = P(s\_t, u\_t) $$
+$$ Q^{\pi}(s\_t, u\_t) = R(s\_{t+1}) + \gamma V^\pi(s\_{t+1}) \text{ where } s\_{t+1} = P(s\_t, u\_t) $$
+
+The expected sum of discounted reward from the state $s$ by taking action $u$ and then following the policy $\pi$.
 
 - We also have $Q^{\pi^*}(s, u) = \max_{\pi}Q^\pi(s, u)$
 
-- Therefore, if we know $Q^{\pi^*}$, we obtain
+- Therefore, when we know $Q^{\pi^*}$, 
 
 $$ \pi^\* (s) =\arg\max\_u  Q^{\pi^{\*}}(s, u)$$
+
+- $Q((3,4), Up) > Q((3,4), Down)$.
 
 ---
 class: middle
@@ -196,9 +202,9 @@ class: middle
 
 - $P$ and $R$ are most of the time unknown.
 - The agent interacts with the environment to learn!
-- By playing, it is possible to learn the model.
-- By trial and error, it is possible to learn the policy.
-- How to learn a policy?
+- Model-based RL: by playing, it is possible to learn the model.
+- Model-free RL: by trial and error, it is possible to learn the policy.
+- How to learn a policy in model-free RL?
 
 ---
 
@@ -250,10 +256,6 @@ $$
 ---
 # In practice
 
-- Discount reward with $\gamma \in [0, 1]$ to encourage direct reward.
-
-$$ G\_0 = \sum\_t \gamma^t r\_t  = r\_0 + \gamma r\_1 + .. + \gamma^t r\_t$$
-
 - Transition function defines a probability to reach $s\_{t+1} \sim P(s\_{t+1}|s\_t, u\_t)$.
 
 $$ V^{\pi}(s\_t) = \sum\_{s'} P(s'|s\_t, \pi(s\_t)) R(s') + \gamma V^\pi(s\_{t+1}) $$
@@ -263,7 +265,10 @@ $$ V^{\pi}(s\_t) = \sum\_{s'} P(s'|s\_t, \pi(s\_t)) R(s') + \gamma V^\pi(s\_{t+1
 $$ V^{\pi}(s\_t) = \sum\_u \pi(u|s) \sum\_{s'} P(s'|s\_t, u) R(s') + \gamma V^\pi(s\_{t+1}) $$
 
 - Value-based method is learning $Q(s, u;\theta)$.
-- Policy-based method approximates directly $\pi(u|s;\theta)
+    - Most of the time used for deterministic policy ($\pi = \arg\max\_u Q(s, u)$).
+- Policy-based method approximates directly $\pi(u|s;\theta)$
+    - Out of the scope of this presentation.
+    - 
 
 ---
 Examples of RL nowadays:
