@@ -53,12 +53,6 @@ class: middle
 
 .footnote[Video credits: [Megan Hayes](https://twitter.com/PigMegan), [@YAWScience](https://twitter.com/YAWScience/status/1304199719036444672), 2020. Taken from [Intro to IA](https://github.com/glouppe/info8006-introduction-to-ai/) by Gilles Louppe.]
 
-???
-
-To provide some intuitions, let us watch this video of a chicken trained to pick the pink paper.
-
-Everytime the chicken 
-
 ---
 class: middle
 
@@ -69,23 +63,11 @@ class: middle
 
 .footnote[Video credits: [Megan Hayes](https://twitter.com/PigMegan), [@YAWScience](https://twitter.com/YAWScience/status/1304199719036444672), 2020. Taken from [Intro to IA](https://github.com/glouppe/info8006-introduction-to-ai/) by Gilles Louppe.]
 
-???
-
-Let us look at another example with a cone.
-
-The chicken has to circle around it to receive a reward.
-
-You see here, it understands that the reward is in the hand.
-
-But it has to figure out that it needs to circle around the cone!
-
-And even if it succeeded, it can still fail.
-
 ---
 
-class: middle
+# Markov decision process (MDP)
 
-An agent is learning by .bold[interacting] in its .bold[environment] to maximise a reward.
+.italic["RL is an agent learning by .bold[interacting] in its .bold[environment] to maximise a reward."]
 
 <br>
 
@@ -93,9 +75,10 @@ An agent is learning by .bold[interacting] in its .bold[environment] to maximise
 
 .footnote[R. S. Sutton and A. G. Barto. Reinforcement learning, second edition: An introduction. 2018]
 
-<!-- ---
+---
 
 An .bold[MDP] is defined by a tuple ($\mathcal{S}$, $\mathcal{U}$,${P}$,${R}$):
+
 
 
 - State space $s_t \in \mathcal{S}$.
@@ -103,208 +86,167 @@ An .bold[MDP] is defined by a tuple ($\mathcal{S}$, $\mathcal{U}$,${P}$,${R}$):
 - Transition function $s\_{t+1} = P(s\_t, u\_t)$ defines the state $s_{t+1}$ reached after taking the action $u_t$ in state $s_t$.
 - Reward function $r\_t=R(s\_{t+1})$ defines the reward obtained.
 
-.center[.width-100[![](figures/MDP_words.png)]] -->
+.center[.width-100[![](figures/MDP_words.png)]]
 
 ---
 
-# Chicken environment
+# Chicken-MDP
 
-.center[States $s$: chicken location $(x, y)$.]
-
-.center[.width-80[![](figures/chicken_env.png)]]
+.center[.width-70[![](figures/chicken_env.png)]]
 
 ---
 
-# Chicken environment
+# Chicken-MDP
 
-.center[States $s$: chicken location $(x, y)$.]
+- State space: location $(x, y)$ where $x$ and $y \in [1,...,4]$.
 
-.center[.width-80[![](figures/chicken_env.png)]]
+    The initial state is $(1, 1)$.
 
+- Action space: $[Left, Right, Up, Down]$.
 
----
+- Transition function: $P(s_{t+1},s_t, u_t)$ always follow the action.
 
-# Chicken environment
-
-.center[Actions $u$: $[Left, Right, Up, Down]$.]
-
-.center[.width-80[![](figures/chicken_env.png)]]
-
-
----
-
-# Chicken environment
-
-.center[
-Transition function: $s_{t+1} = P(s_t, u_t)$ is deterministic.
-]
-
-.center[.width-80[![](figures/chicken_env.png)]]
+- Reward: 
+    - +1 if it reaches the nest in (4, 4),
+    - -1 if it reaches the fox in (2, 4),
+    - 0 otherwhise.
 
 ---
+# How to reach the nest?
 
-# Chicken environment
+Agent selects action $u$ in state $s$ based on its deterministic policy $\pi(s) : \mathcal{S} \rightarrow \mathcal{U}$.
 
-.center[
-Reward function: $+1$ if $s = (4,4)$, $-1$ if $s = (2, 4)$, $0$ otherwise.
-]
+.bold[Goal]: learn the policy $\pi$ that maximises $\mathbb{E}_{\pi} \left[ \sum_t \gamma^t r_t \right]$, the sum of discounted reward.
 
-.center[.width-80[![](figures/chicken_env.png)]]
+$\gamma \in [0, 1]$ encourages direct reward.
+
+.center[.width-100[![](figures/MDP_words.png)]]
 
 
 ---
 
-# Goal ?
+# The optimal policy
 
-For each $s=(x, y)$, we want to choose the .bold[best action!]
+For each $(x, y)$, we want to choose the best direction!
 
+For example, the best action in $(3, 4)$ is to go up to reach the nest.
 
-.center[.width-80[![](figures/chicken_env_policy.png)]]
-
----
-
-class: middle
-
-The agent learns the policy $\pi:\mathcal{S}\to\mathcal{U}$ that maximises
-
-$$\mathbb{E}_{\pi} \left[ \sum_t \gamma^t r_t \right].$$
-
-The discount factor $\gamma \in [0, 1]$ encourages direct reward.
-
-???
-How can I know which is the best action?
+.center[.width-70[![](figures/chicken_env_policy.png)]]
 
 ---
-class: middle
 
-$\sum_t \gamma^t r_t$ if $\gamma=0.9$:
-- Green:  $0+0+0+0+0+0.9^6$,
-- Yellow: $0+0+0+0+0+0+0+0.9^8$.
+# How good is the policy?
 
-.center[.width-70[![](figures/chicken_env_discount.png)]]
----
-class: middle
+- If we know $P$ and $R$, it is easy to evaluate $\pi$.
+- $\pi(s\_t)$ provides the action $u_t$ played $\forall t$.
+- $P(s\_t, u\_t)$ provides $s_{t+1}$ reached after taking the action $u_t$.
+- $R(s\_{t+1})$ provides the reward obtained in $s_{t+1}$.
 
-In one state $s$, after playing an action $u$, what is the best $\sum_t \gamma^t r_t$ possible?
+- Repeat this from the initial state state $s_0$ to obtain the return of the policy
+$$ G\_0 = \sum\_t \gamma^t r\_t  = r\_0 + \gamma r\_1 + .. + \gamma^t r\_t$$
 
 --
 
-.center[.width-80[![](figures/chicken_env_policy.png)]]
+- This is the .bold[state value function]
+$$ V^{\pi}(s) = \mathbb{E}\_{\pi} \left[ \sum\_t \gamma^t r\_t | s\_t = s \right] $$
 
-???
-Show on the environment from (2, 3) that going right and up?
+    The expected sum of discounted reward from the state $s$ by following the policy $\pi$.
 
 ---
-class: middle
 
-In state $s_t$, after playing action $u_t$, what is the best $\sum_t \gamma^t r_t$ possible?
+# The optimal value functions
 
---
+- We can evaluate policies given a state:
 
-$$ r\_t + \text{the best sum of discounted rewards from } s_{t+1}$$
+    $$ V^{\pi}(s\_t) = R(s\_{t+1}) + \gamma V^\pi(s\_{t+1})$$
+    where $s\_{t+1} = P(s\_t, \pi(s\_t)) $
 
---
+- The optimal policy $\pi^*$ is the one maximising the value function:
 
-$$ r\_t + \max\_{s\_{t+1}} \big[ \gamma R(s\_{t+1}) + \text{the best sum of discounted rewards from } s_{t+2} \big] $$
+$$ \pi^* (s) = \arg\max\_\pi V^{\pi}(s)$$
 
---
-
-$$ r\_t + \max\_{s\_{t+1}} \big[ \gamma R(s\_{t+1}) + \max\_{s\_{t+2}} \big[ \gamma^2 R(s\_{t+2}) + \text{the best sum of discounted rewards from } s_{t+3} \big] $$
+- In (3, 4), going $Up$ has a .bold[higher] value function then the one going $Down$.
 
 --
 
-$$ r\_t + \gamma \max\big[  r\_{t+1} + \gamma^2 \max \big[  r\_{t+2} + .... \big] \big] $$
+<br>
+Can we do better?
 
+---
+# Consider action !
+
+- Instead of comparing two policies, compare actions.
+- Evaluate the return given a state $s$ and .bold[an action] $u$.
+- This is the .bold[state action value function]:
+
+$$ Q^{\pi}(s\_t, u\_t) = R(s\_{t+1}) + \gamma V^\pi(s\_{t+1}) \text{ where } s\_{t+1} = P(s\_t, u\_t) $$
+
+The expected sum of discounted reward from the state $s$ by taking action $u$ and then following the policy $\pi$.
+
+- We also have $Q^{\pi^*}(s, u) = \max_{\pi}Q^\pi(s, u)$
+
+- Therefore, when we know $Q^{\pi^*}$, 
+
+$$ \pi^\* (s) =\arg\max\_u  Q^{\pi^{\*}}(s, u)$$
+
+- $Q((3,4), Up) > Q((3,4), Down)$.
 
 ---
 class: middle
 
-# Q values
+.italic[How to learn the optimal policy .bold[without knowing] the MDP component?]
 
-For each state and action ($s_t, u_t$), the best $\sum_t \gamma^t r_t$ possible is
+---
 
-$$ Q(s\_t, u\_t) = r\_t + \gamma \max\_{u'} Q(s\_{t+1}, u')$$
+# Model based or model free?
 
---
-
-The optimal policy is
-
-$$ \pi^\* (s_t) =\arg\max\_u  Q(s_t, u) $$
-
-???
-But how to learn them?
+- $P$ and $R$ are most of the time unknown.
+- The agent interacts with the environment to learn!
+- Model-based RL: by playing, it is possible to learn the model.
+- Model-free RL: by trial and error, it is possible to learn the policy.
+- How to learn a policy in model-free RL?
 
 ---
 
 # Q Learning
 
-- Start with initial Q values to 0:
-
-$$ \forall (s, u),  Q(s, u) = 0$$
-
---
-
+- Learn directly the $Q$ function.
+- Store $Q$ values for each state-action pair.
 - Play and update:
 
-$$ Q(s\_t, u\_t) \leftarrow Q(s\_t, u\_t) + \alpha \left[ r\_t + \gamma \max\_u Q(s\_{t+1}, u) - Q(s\_t, u\_t) \right]$$
-
-
----
-
-# Epsilon greedy
-
-How agent selects action?
-- Take the best action most of the time
-    
-$$\pi^\* (s) =\arg\max\_u  Q(s, u),$$
-
-- sometimes, with a probability $\epsilon$, take a random one!
+$$ Q(s\_t, u\_t) \leftarrow Q(s\_t, u\_t) + \alpha \left[ r\_t + \gamma \max\_u Q(s\_{t+1}, u) - Q(s\_t, u\_t) \right] $$
 
 --
 
-# Exploration vs exploitation!
+- How agent selects action?
+    - Exploit: $\pi^\* (s) =\arg\max\_u  Q^{\pi^{\*}}(s, u)$
+    - Explore: plays randomly with a probability $\epsilon$.
+
+--
+
+- Limitations:
+    - Store $|\mathcal{S}| * |\mathcal{U}|$ values.
+    - What if $\mathcal{S}$ is continuous?
+
 
 ---
-
-# Chicken Q values:
-
-How much updates to know $Q((3,4), Up) = 1$ and $Q((3,4), Down) = -1$?
-
-.center[.width-70[![](figures/chicken_env_discount.png)]]
-
-???
-If no luck, never!
-
----
-class: middle
-
-Limitations
-- Need to explore a lot!
-- Store $|\mathcal{S}| * |\mathcal{U}|$ values.
-    - Chicken MDP: $16 * 4$
-    - If fox can be anywhere: $16 \* 16 \* 4$
-    - If fox and nest can be anywhere:  $16 \* 16 \* 16 \* 4$
-    - If diagional actions: $16 \* 16 \* 16 \* 8$
-    - If grid is larger: $10000 \* 10000 \* 10000 \* 8$
-- What if $\mathcal{S}$ is continuous?
-
----
-class: middle
 
 # Deep Q Network
 
 Q-learning with a neural network parametrised by $\theta$.
 
-Minimise the loss
+- Minimise the loss function:
 
 $$
 \mathcal{L}(\theta) = \mathbb{E}\_{\langle s\_{t},u\_{t},r\_{t},s\_{t+1} \rangle \sim B} \big(r\_{t} + \gamma  \underset{u \in \mathcal{U}}{\max} Q(s\_{t+1}, u; \theta') - Q(s\_{t}, u\_{t}; \theta)\big)^2$$
 
 
-???
 - The replay buffer $B$ is a collection of transitions.
 - Sampling transitions allows to update the network.
 - $\theta'$ are the parameters of the target network, a copy of $\theta$ periodically updated.
+
+--
+
 - To play Atari games:
     - $\theta$ is a CNN.
 - When the environment is partially observable (POMDP):
@@ -314,32 +256,22 @@ $$
 ---
 # In practice
 
-Transition function defines a probability to reach $s\_{t+1} \sim P(s\_{t+1}|s\_t, u\_t)$.
+- Transition function defines a probability to reach $s\_{t+1} \sim P(s\_{t+1}|s\_t, u\_t)$.
 
-$$ Q(s\_t, u\_t) = r\_t + \gamma \sum\_{s\_{t+1}} P(s\_{t+1}|s\_t, u') \max\_{u'} Q(s_{t+1}, u')$$
-
---
-
-.bold[Markov Decision Process (MDP).]
-
-.center[.width-100[![](figures/MDP_words.png)]]
-
----
-# In practice
-
-- .bold[Value-based method] is learning $Q(s, u;\theta)$.
-    - Most of the time used for deterministic policy $\pi = \arg\max\_u Q(s, u)$.
-
---
+$$ V^{\pi}(s\_t) = \sum\_{s'} P(s'|s\_t, \pi(s\_t)) R(s') + \gamma V^\pi(s\_{t+1}) $$
 
 - Stochastic policies $\pi(u|s)$ exist.
 
-- .bold[Policy-based method] approximates directly $\pi(u|s;\theta)$.
+$$ V^{\pi}(s\_t) = \sum\_u \pi(u|s) \sum\_{s'} P(s'|s\_t, u) R(s') + \gamma V^\pi(s\_{t+1}) $$
 
-- They also accept continuous action space!
+- Value-based method is learning $Q(s, u;\theta)$.
+    - Most of the time used for deterministic policy ($\pi = \arg\max\_u Q(s, u)$).
+- Policy-based method approximates directly $\pi(u|s;\theta)$
+    - Out of the scope of this presentation.
+    - 
 
 ---
-# Examples of RL application
+Examples of RL nowadays:
 
 - Chip design
 - Drone control
@@ -350,11 +282,13 @@ $$ Q(s\_t, u\_t) = r\_t + \gamma \sum\_{s\_{t+1}} P(s\_{t+1}|s\_t, u') \max\_{u'
 ---
 # Summary
 
-- In RL, an agent learns by interacting in its environment to maximise a reward.
+- RL is an agent learning by .bold[interacting] in its .bold[environment] to maximise a reward.
 
-- Value based method provides $Q(s, u)$, the best sum of discounted rewards.
+- It is possible to evaluate policies when knowing the model.
 
-- The agent select the best action $\arg\max\_u Q(s, u)$ in state $s$.
+- Model free RL learn by trial and error the policy.
+
+- Value based method learn $Q(s, u)$ in order to select the best action $\arg\max\_u Q(s, u)$ in state $s$.
 
 - It is possible to approximate $Q(s, u)$ or $\pi(u|s)$ with neural networks.
 
@@ -365,28 +299,6 @@ class: section
 # Multi-Agent
 
 # Reinforcement Learning
-
----
-
-class: middle
-
-What changes if the fox can move and also learn?
-
-
----
-
-The Markov decision process become a .bold[stochastic game]:
-
-- $n$ agents $a\_i$ with $i \in \\{1,...,n\\}$.
-- $n$ reward function: $r^{a}\_t = R^{a}(s\_{t+1}, s\_t, \mathbf{u\_t})$.
-
-- All agents learn a policy $\pi^{a}$ to maximise $\sum_t \gamma^t r^a_t$.
-
----
-class: middle
-
-# **.bold[Rewards depend on actions of all agents]**
-
 
 
 ---
