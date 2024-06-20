@@ -14,18 +14,28 @@ June 28, 2024
 # Today
 <br><br>
 
-- Reinforcement learning and multi-agent reinforcement learning.
-<br><br>
+- Introduction to reinforcement learning.
 
-- What happens when multiple agents learn together?
-<br><br>
+- Multi-agent reinforcement learning.
 
-- How to train a team of agents to cooperate with RL?
-<br><br>
+- Contributions of the thesis:
+    - Learning to cooperate,
+    - Learning to cooperate in a competitive environment.
 
-- How to train a team to compete against another one?
+???
+
+Today, I will try to explain what is reinforcement learning.
+
+In the first part, we will start with the classical setting where a single agent learns with reinforcement learning.
+
+Then, we will discuss what changes when several agents learn.
+
+In the second part of the presentation, we will dive more technically in the contributions of the thesis and what is to learn to cooperate and how to cooperate in a competitive environment.
+
+
 
 ---
+
 
 class: section
 
@@ -57,9 +67,11 @@ class: middle
 
 To provide some intuitions, let us watch this video of a chicken trained to pick the pink paper.
 
-Everytime the chicken 
+The chicken has to perform the correct actions to obtain the reward, which is to pick de pink paper.
 
-USE RL words
+Everytime, its environment changes!
+
+The pink paper is moved to another place and the chicken needs to adapt to the changes in the state of its environment to obtain the reward.
 
 ---
 class: middle
@@ -81,7 +93,7 @@ You see here, it understands that the reward is in the hand.
 
 But it has to figure out that it needs to circle around the cone!
 
-And even if it succeeded, it can still fail.
+And even if it succeeded before, it can still fail because it is still exploring what is the best things to do.
 
 ---
 
@@ -96,7 +108,16 @@ An agent is learning by .bold[interacting] in its .bold[environment] to maximise
 .footnote[R. S. Sutton and A. G. Barto. Reinforcement learning, second edition: An introduction. 2018]
 
 ???
-Explain more the state and the action!
+
+.bold[DIRE S U et R]
+
+To rephrase our first definition, we then say that in RL, an agent is learning by interacting in its environment to maximise a reward.
+
+As we can see in the diagram, the environment is in a given state, given by the letter S.
+
+The agent perceives this state and decide on an action, that we denote U.
+
+It then receives a reward R and start over.
 
 
 ---
@@ -114,283 +135,137 @@ Chicken location $(x, y)$]
 ]]
 
 
+???
+Let's look and example
 
-
----
-
-# Chicken environment
-
-.center[States $s$: chicken location $(x, y)$.]
-
-.center[.width-80[![](figures/chicken_env.png)]]
 
 
 ---
 
 # Chicken environment
 
-.center[Actions $u$: $[Left, Right, Up, Down]$.]
+.grid[
+.kol-1-3[
+.center[Actions $u$
 
-.center[.width-80[![](figures/chicken_env.png)]]
-
-
----
-
-# Chicken environment
-
-.center[
-Transition function: $s_{t+1} = P(s_t, u_t)$ is deterministic.
+$[Left, Right, Up, Down]$]
 ]
-
-.center[.width-80[![](figures/chicken_env.png)]]
+.kol-2-3[
+.center[.width-100[![](figures/chicken_env.png)]]
+]]
 
 ---
 
 # Chicken environment
 
+.grid[
+.kol-1-3[
 .center[
-Reward function: $+1$ if $s = (4,4)$, $-1$ if $s = (2, 4)$, $0$ otherwise.
+Transition function
+
+$s_{t+1} = P(s_t, u_t)$
 ]
-
-.center[.width-80[![](figures/chicken_env.png)]]
-
+]
+.kol-2-3[
+.center[.width-100[![](figures/chicken_env.png)]]
+]]
 
 ---
 
-# Goal
+# Chicken environment
+
+
+
+.grid[
+.kol-1-3[
+.center[
+Reward function
+
+$+1$ if $s = (4,4)$, 
+
+$-1$ if $s = (2, 4)$,
+
+$0$ otherwise
+]
+]
+.kol-2-3[
+.center[.width-100[![](figures/chicken_env.png)]]
+]]
+
+---
+
+# The optimal policy
 
 .center[For each $s=(x, y)$, we want to choose the .bold[best action!]]
 
 
+.center[.width-80[![](figures/chicken_env.png)]]
+
+
+
+???
+Let's think for a second, what is the best action to be made in (3,4) or in (3, 1)?
+
+---
+
+class: middle
+
+Easy to find the optimal policy, why do we need reinforcement learning?
+
 .center[.width-80[![](figures/chicken_env_policy.png)]]
 
 ---
+# What knows the agent?
 
-class: middle
+1. It is in the state (1, 1),
 
-# It is hard because model
-
-# Goal
-
-
-The agent learns the policy $\pi$ mapping a state $s$ to an action $u$ that maximises
-
-$$\mathbb{E}_{\pi} \left[ \sum_t \gamma^t r_t \right].$$
-
-The discount factor $\gamma \in [0, 1]$ encourages direct reward.
-
-???
-How can I know which is the best action?
-
----
-class: middle
-
-$\sum_t \gamma^t r_t$ if $\gamma=0.9$:
-- Green:  $0+0+0+0+0+0.9^6$,
-- Yellow: $0+0+0+0+0+0+0+0.9^8$.
-
-.center[.width-70[![](figures/chicken_env_discount.png)]]
----
-class: middle
-
-In a state $s$, after playing an action $u$, what is the best sum of discounted rewards?
+2. It has the choice between four actions.
 
 --
 
-.center[.width-80[![](figures/chicken_env_policy.png)]]
+It does not know:
 
-???
-Show on the environment from (2, 3) that going right and up?
-
----
-class: middle
-
-In state $s_t$, after playing action $u_t$, what is the best $\sum_t \gamma^t r_t$ possible?
+- What means (1, 1),
 
 --
 
-$$ r\_t + \text{the best sum of discounted rewards from } s_{t+1}$$
+- The third action is "Up",
 
 --
 
-$$ r\_t + \max\_{s\_{t+1}} \big[ \gamma R(s\_{t+1}) + \text{the best sum of discounted rewards from } s_{t+2} \big] $$
+- Taking the third action will change the state to (2, 1),
 
 --
 
-$$ r\_t + \max\_{s\_{t+1}} \big[ \gamma R(s\_{t+1}) + \max\_{s\_{t+2}} \big[ \gamma^2 R(s\_{t+2}) + \text{the best sum of discounted rewards from } s_{t+3} \big] $$
+- The reward in (2, 1) is 0.
 
 --
 
-$$ r\_t + \gamma \max\big[  r\_{t+1} + \gamma^2 \max \big[  r\_{t+2} + .... \big] \big] $$
-
-
----
-class: middle
-
-# State action value functions
-
-For each state and action ($s_t, u_t$), the best $\sum_t \gamma^t r_t$ possible is the Q function:
-
-$$ Q(s\_t, u\_t) = r\_t + \gamma \max\_{u'} Q(s\_{t+1}, u').$$
-
---
-
-The optimal policy is
-
-$$ \pi^\* (s_t) =\arg\max\_u  Q(s_t, u) .$$
-
-???
-But how to learn them?
-
----
-
-# Q Learning
-
-- Start with initial Q values to 0:
-
-$$ \forall (s, u),  Q(s, u) = 0$$
-
---
-
-- Play and update:
-
-$$ Q(s\_t, u\_t) \leftarrow Q(s\_t, u\_t) + \alpha \left[ r\_t + \gamma \max\_u Q(s\_{t+1}, u) - Q(s\_t, u\_t) \right]$$
-
-???
-C'est pas la vraie fonction de Q que tu update avec cette fonction mais une approximation (Q chapeau?). L'équation de Bellman avec le vrai Q c'est un = et pas une flèche d'update.
-
----
-
-# Epsilon greedy
-
-How agent selects action during training?
-- Take the best action most of the time
-    
-$$\pi^\* (s) =\arg\max\_u  Q(s, u),$$
-
-- sometimes, with a probability $\epsilon$, take a random one!
-
---
-
-# Exploration vs exploitation!
-
----
-
-# Chicken Q values:
-
-How much updates to know $Q((3,4), Up) = 1$ and $Q((3,4), Down) = -1$?
-
-.center[.width-70[![](figures/chicken_env_discount.png)]]
-
-???
-If no luck, never!
-
----
-class: middle
-
-Limitations
-- Need to explore a lot!
-- Store $|\mathcal{S}| * |\mathcal{U}|$ values.
-    - Chicken MDP: $16 \times 4$
-    - If fox can be anywhere: $16 \times 16 \times 4$
-    - If fox and nest can be anywhere:  $16 \times 16 \times 16 \times 4$
-    - If diagional actions: $16 \times 16 \times 16 \times 8$
-    - If grid is larger: $10000 \times 10000 \times 10000 \times 8$
-- What if $\mathcal{S}$ is continuous?
-
----
-class: middle
-
-# Deep Q Network
-
-Q-learning with a neural network parametrised by $\theta$.
-
-Minimise the loss
-
-$$
-\mathcal{L}(\theta) = \mathbb{E}\_{\langle s\_{t},u\_{t},r\_{t},s\_{t+1} \rangle \sim B} \big(r\_{t} + \gamma  \underset{u \in \mathcal{U}}{\max} Q(s\_{t+1}, u; \theta') - Q(s\_{t}, u\_{t}; \theta)\big)^2$$
-
-- The replay buffer $B$ is a collection of transitions.
-- $\theta'$ is the target network
-???
-- The replay buffer $B$ is a collection of transitions.
-- Sampling transitions allows to update the network.
-- $\theta'$ are the parameters of the target network, a copy of $\theta$ periodically updated.
-- To play Atari games:
-    - $\theta$ is a CNN.
-- When the environment is partially observable (POMDP):
-    - $\theta$ is a recurrent network (DRQN).
-    - $B$ stores sequences of transitions.
-
----
-# In practice
-
-Transition function defines a probability to reach $s\_{t+1} \sim P(s\_{t+1}|s\_t, u\_t)$.
-
-$$ Q(s\_t, u\_t) = r\_t + \gamma \sum\_{s\_{t+1}} P(s\_{t+1}|s\_t, u') \max\_{u'} Q(s_{t+1}, u')$$
-
---
-
-.bold[Markov Decision Process (MDP).]
-
-.center[.width-100[![](figures/MDP_words.png)]]
-
-???
-Talk about the markov property.
-
----
-# In practice
-
-We evaluate any policy $\pi$ with the .bold[state value function] $V$:
-
-talk about pi
-
-$$ V(s)=\mathbb{E}\_{\pi}\left[r\_t + \gamma V(s\_{t+1})|s\_t=s\right] $$ 
-
---
-
-
-
-- .bold[Value-based method] is learning $Q(s, u;\theta)$.
-    - Most of the time used for deterministic policy $\pi = \arg\max\_u Q(s, u)$.
-
---
-
-- .bold[Policy-based method] approximates directly $\pi(u|s;\theta)$.
-    - Allows stochastic policies $\pi(u|s)$.
-
---
-
-- .bold[Partial observability] in real-world.
-    - Agent has an observation $o$ of $s$.
-    - $\pi(u|\tau)$, where $\tau$ is action-observation history.
-    - Recurrent neural network.
-
-y'a beaucoup ici, il faut alléger
+It needs to .bold[explore], by trials and errors, to learn the optimal policy.
 
 ---
 # Examples of RL application
 
+- Content recommendation
 - Chip design
 - Drone control
-- Content recommendation
-- Supply chain management, warehouses
 - Robotics
 
-- Provide state and action and reward intuitions.
-
+???
+Provide state and action and reward intuitions.
 
 ---
-# Summary
+# Wrap-up
 
 - In RL, an agent learns by interacting in its environment to maximise a reward.
 
-- Value based method provides $Q(s, u)$, the best sum of discounted rewards.
+- It learns a policy that provides the action $u$ to take in a state $s$.
 
-- The agents select the best action $\arg\max\_u Q(s, u)$ in state $s$.
+- It does not know the environment and needs to explore.
 
-- It is possible to approximate $Q(s, u)$ or $\pi(u|s)$ with neural networks.
+--
 
+# What if the fox can move?
 
 ---
 class: section
@@ -405,11 +280,10 @@ What changes if the fox can move and also learn?
 
 ---
 
-# Stochastic game
+# Multi-agent environment
 
-All agents $a\_i \in \{ 1,...,n \}$ learn a policy $\pi^{a}$ to maximise
+All agents $a\_i \in \{ 1,...,n \}$ learn a policy $\pi^{a}$ to maximise their own reward $r_t^{a\_i}$.
 
-$$ \mathbb{E}\_\pi \left[ \sum\_t \gamma^t r_t^{a\_i} \right] \text{ where }\pi = { \pi^{a\_1}, .. ,\pi^{a\_n} \} $$
 
 .center[.width-100[![](figures/SG.png)]]
 
@@ -440,11 +314,145 @@ class: middle
 ---
 class: section
 
-# Learning to cooperate
+# Learning with reinforcement learning
 
-- Background
+---
+
+# Goal
+
+The agent learns the policy $\pi$ mapping a state $s$ to an action $u$ that maximises
+
+$$\mathbb{E}_{\pi} \left[ \sum_t \gamma^t r_t \right].$$
+
+The discount factor $\gamma \in [0, 1]$ encourages direct reward.
+
+???
+How can I know which is the best action?
+
+---
+
+# In practice
+
+Transition function defines a probability to reach $s\_{t+1} \sim P(s\_{t+1}|s\_t, u\_t)$.
+
+--
+
+.bold[Markov Decision Process (MDP).]
+
+.center[.width-100[![](figures/MDP_words.png)]]
+
+???
+Talk about the markov property.
+
+
+---
+
+# Policy evaluation
+
+What is the expected sum of discounted rewards from $s$ following $\pi$?
+
+--
+
+This is the .bold[state value function] $V$.
+
+$$ V^{\pi}(s)= \mathbb{E}_{\pi} \left[ \sum_t \gamma^t r_t \right]$$ 
+
+--
+
+$$ V^{\pi}(s)= \mathbb{E}\_{\pi}\left[r\_t + \gamma V^{\pi}(s\_{t+1})|s\_t=s\right]$$
+
+--
+
+The .bold[optimal policy] is
+
+$$ \pi^\*(s) = \arg\max\_\pi V^{\pi}(s).$$
+
+---
+
+# The state-action value function
+
+From $s$, taking $u$, what is the expected sum of discounted reward following $\pi$?
+
+--
+
+$$ Q^\pi(s\_t, u\_t) = \mathbb{E}\_{\pi}\left[r\_t + \gamma V^{\pi}(s\_{t+1})|s\_t=s, u\_t = u\right]$$
+
+--
+
+Allows the deterministic policy 
+
+$$ \pi(s) = \arg\max\_u Q^\pi (s, u) $$
+
+--
+
+Bellman optimality equation
+
+$$ Q^{\pi^\*}(s, u) = \max\_{\pi}Q^\pi(s, u) $$
+
+--
+
+$$  Q^{\pi^\*}(s, u) = \mathbb{E}\_{\pi^\*}[r\_t + \gamma \max\_{u'} Q^{\pi^\*}(s\_{t+1}, u') |s\_t=s, u\_t=u]$$
+
+---
+
+# Q Learning
+
+If we know the optimal Q values, we know the optimal policy.
+
+$$ \pi^\*(s) = \arg\max\_u Q^{\pi^\*} (s, u) $$
+
+--
+
+- Play and update:
+
+$$ \widehat{Q}(s\_t, u\_t) \leftarrow \widehat{Q}(s\_t, u\_t) + \alpha \left[ r\_t + \gamma \max\_u \widehat{Q}(s\_{t+1}, u) - \widehat{Q}(s\_t, u\_t) \right]$$
+
+- Learning rate $\alpha \in [0, 1].$ 
+
+
+---
+
+# Deep Q Network (DQN)
+
+Q-learning with a neural network $\theta$.
+
+Minimise the loss
+
+$$
+\mathcal{L}(\theta) = \mathbb{E}\_{\langle s\_{t},u\_{t},r\_{t},s\_{t+1} \rangle \sim B} \big(r\_{t} + \gamma  \underset{u \in \mathcal{U}}{\max} Q(s\_{t+1}, u; \theta') - Q(s\_{t}, u\_{t}; \theta)\big)^2$$
+
+- The replay buffer $B$ is a collection of transitions,
+- $\theta'$ is the target network,
+- Transitions with $\epsilon$-greedy policy.
+
+--
+
+If $s$ are images, $\theta$ is a CNN.
+
+If $s$ is partially obserable, $\theta$ is a RNN.
+
+
+
+???
+- The replay buffer $B$ is a collection of transitions.
+- Sampling transitions allows to update the network.
+- $\theta'$ are the parameters of the target network, a copy of $\theta$ periodically updated.
+- To play Atari games:
+    - $\theta$ is a CNN.
+- When the environment is partially observable (POMDP):
+    - $\theta$ is a recurrent network (DRQN).
+    - $B$ stores sequences of transitions.
+
+---
+class: section
+
+# Learning to cooperate with reinforcement learning
+
+???
+
 - Train a team to cooperate
 - Contributions
+
 
 ---
 # Decentralised Partially Observable Markov Decision Process (Dec-POMDP)
@@ -454,8 +462,6 @@ A single global reward
 $$
 r^{a\_1}\_t = r^{a\_n}\_t=r\_t = R(s\_{t+1}, s\_t, \mathbf{u\_t}): \mathcal{S}^2 \times \mathcal{U} \rightarrow \mathbb{R}
 $$
-
-
 
 .center.width-85[![](figures/decpomdp.png)]
 
@@ -511,14 +517,9 @@ class: middle
 .footnote[https://github.com/oxwhirl/smac  Samvelyan, M., Rashid, T., De Witt, C. S., Farquhar, G., Nardelli, N., Rudner, T. G., ...  Whiteson, S. (2019). The starcraft multi-agent challenge.]
 
 ---
-class: section
-
-# Train a team to cooperate
-
-
----
 # Centralised controller
 
+--
 
 .grid[
 .kol-2-5[
@@ -557,7 +558,6 @@ class: section
 ]
 ]
 
-
 ---
 
 # Centralised training with <br> decentralised execution (CTDE)
@@ -584,7 +584,7 @@ Only $Q\_a(\tau^a\_t, u^a\_t)$ during the execution.
 
 --
 
-.bold[Solution]: Learn $Q(s\_t, \mathbf{u\_t})$ as a monotonic factorisation of all $Q\_a(\tau^a\_t, u^a\_t)$ .
+.bold[Solution]: Learn $Q(s\_t, \mathbf{u\_t})$ as a factorisation of all $Q\_a(\tau^a\_t, u^a\_t)$ .
 
 
 ---
@@ -593,7 +593,6 @@ Only $Q\_a(\tau^a\_t, u^a\_t)$ during the execution.
 
 Learn $Q(s\_t, \mathbf{u\_t})$ as a function of all $Q\_a(\tau^a\_t, u^a\_t)$ during training.
 
-.bold[Individual Global Max:]
 $$
 \underset{\mathbf{u\_t}}{\arg\max} Q(s\_t, \mathbf{u\_t}) 
 =
@@ -606,17 +605,10 @@ $$
 \end{pmatrix}
 $$
 
-???
+--
 
-$Q_a$ is not a $Q$ function anymore, but a utility function used to select actions.
+Value Decomposition Network (VDN)
 
- 
-
-Question: How to satisfy IGM?
-
----
-
-# Value Decomposition Network
 $$
     Q(s\_t, \mathbf{u\_t}) = \sum\_{i=1}^n Q\_{a\_i}(\tau^{a\_i}\_t, u^{a\_i}\_t) 
 $$
@@ -629,12 +621,14 @@ $$
     \bigg[  \big(r\_{t} + \gamma \underset{\mathbf{u} \in \mathcal{U}}{\max} Q(s\_{t+1}, \mathbf{u}; \theta') - Q(s\_{t}, \mathbf{u\_{t}}; \theta)\big)^{2} \bigg]
 $$
 
---
 
-Limitations
+???
 
-- Addition is not complex.
-- Where is $s\_t$? 
+$Q_a$ is not a $Q$ function anymore, but a utility function used to select actions.
+
+ 
+
+Question: How to satisfy IGM?
 
 ---
 # QMIX
@@ -653,19 +647,13 @@ $$
 
 .center.width-50[![](figures/qmix.png)]
 
+---
+class: middle
+
+Are there better methods than Deep Q Network?
 
 ---
-# Results in 3M
-
-.center.width-50[![](figures/qmix_fig/base_legend.png)]
-.center.width-80[![](figures/qmix_fig/base.png)]
-
-.footnote[Rashid, T., Samvelyan, M., Schroeder, C., Farquhar, G., Foerster, J., Whiteson, S. (2018). Qmix: Monotonic value function factorisation for deep multi-agent reinforcement learning.]
-
-
----
-# Deep-Quality Value
-
+# Deep Quality-Value
 
 Deep Q Network:
 $$
