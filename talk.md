@@ -17,7 +17,7 @@ June 28, 2024
 - What is reinforcement learning (RL)?
 <br><br>
 
-- What are the challenges when multiple agents learn together?
+- What happens when multiple agents learn together?
 <br><br>
 
 - How to train a team of agents to cooperate with RL?
@@ -185,7 +185,7 @@ $\sum_t \gamma^t r_t$ if $\gamma=0.9$:
 ---
 class: middle
 
-In one state $s$, after playing an action $u$, what is the best $\sum_t \gamma^t r_t$ possible?
+In a state $s$, after playing an action $u$, what is the best sum of discounted rewards?
 
 --
 
@@ -219,17 +219,17 @@ $$ r\_t + \gamma \max\big[  r\_{t+1} + \gamma^2 \max \big[  r\_{t+2} + .... \big
 ---
 class: middle
 
-# Q values
+# State action value functions
 
-For each state and action ($s_t, u_t$), the best $\sum_t \gamma^t r_t$ possible is
+For each state and action ($s_t, u_t$), the best $\sum_t \gamma^t r_t$ possible is the Q function:
 
-$$ Q(s\_t, u\_t) = r\_t + \gamma \max\_{u'} Q(s\_{t+1}, u')$$
+$$ Q(s\_t, u\_t) = r\_t + \gamma \max\_{u'} Q(s\_{t+1}, u').$$
 
 --
 
 The optimal policy is
 
-$$ \pi^\* (s_t) =\arg\max\_u  Q(s_t, u) $$
+$$ \pi^\* (s_t) =\arg\max\_u  Q(s_t, u) .$$
 
 ???
 But how to learn them?
@@ -281,11 +281,11 @@ class: middle
 Limitations
 - Need to explore a lot!
 - Store $|\mathcal{S}| * |\mathcal{U}|$ values.
-    - Chicken MDP: $16 * 4$
-    - If fox can be anywhere: $16 \* 16 \* 4$
-    - If fox and nest can be anywhere:  $16 \* 16 \* 16 \* 4$
-    - If diagional actions: $16 \* 16 \* 16 \* 8$
-    - If grid is larger: $10000 \* 10000 \* 10000 \* 8$
+    - Chicken MDP: $16 \times 4$
+    - If fox can be anywhere: $16 \times 16 \times 4$
+    - If fox and nest can be anywhere:  $16 \times 16 \times 16 \times 4$
+    - If diagional actions: $16 \times 16 \times 16 \times 8$
+    - If grid is larger: $10000 \times 10000 \times 10000 \times 8$
 - What if $\mathcal{S}$ is continuous?
 
 ---
@@ -324,19 +324,35 @@ $$ Q(s\_t, u\_t) = r\_t + \gamma \sum\_{s\_{t+1}} P(s\_{t+1}|s\_t, u') \max\_{u'
 
 .center[.width-100[![](figures/MDP_words.png)]]
 
+???
+Talk about the markov property.
+
 ---
 # In practice
+
+We evaluate any policy $\pi$ with the .bold[state value function] $V$:
+
+$$ V(s)=\mathbb{E}\_{\pi}\left[r\_t + \gamma V(s\_{t+1})|s\_t=s\right] $$ 
+
+--
+
+
 
 - .bold[Value-based method] is learning $Q(s, u;\theta)$.
     - Most of the time used for deterministic policy $\pi = \arg\max\_u Q(s, u)$.
 
 --
 
-- Stochastic policies $\pi(u|s)$ exist.
-
 - .bold[Policy-based method] approximates directly $\pi(u|s;\theta)$.
+    - Allows stochastic policies $\pi(u|s)$.
 
-- They also accept continuous action space!
+--
+
+- .bold[Partial observability] in real-world.
+    - Agent has an observation $o$ of $s$.
+    - $\pi(u|\tau)$, where $\tau$ is action-observation history.
+    - Recurrent neural network.
+
 
 ---
 # Examples of RL application
@@ -366,173 +382,179 @@ class: section
 
 # Reinforcement Learning
 
----
-
-class: middle
-
+???
 What changes if the fox can move and also learn?
 
 
 ---
 
-The Markov decision process become a .bold[stochastic game]:
+# Stochastic game
 
-- $n$ agents $a\_i$ with $i \in \\{1,...,n\\}$.
-- $n$ reward function: $r^{a}\_t = R^{a}(s\_{t+1}, s\_t, \mathbf{u\_t})$.
+All agents learn a policy $\pi^{a}$ to maximise
 
-- All agents learn a policy $\pi^{a}$ to maximise $\sum_t \gamma^t r^a_t$.
+$$ \mathbb{E}\_\pi \left[ \sum\_t \gamma^t r_t^{a\_i} \right] \text{ where }\pi = { \pi^{a\_1}, .. ,\pi^{a\_n} \} $$
+
+.center[.width-100[![](figures/SG.png)]]
+
+
+???
+We still have the transition
 
 ---
 class: middle
 
 # **.bold[Rewards depend on actions of all agents]**
 
-
-
----
-# Stochastic game 
-
-Stochastic game (also referred to as Markov game) $[n, \mathcal{S}, O, \mathcal{Z}, \mathcal{U}, r, P, \gamma]$:
-
-- A set of $n$ agents, each one is represented by $a$ or $a\_i, i \in \\{1,...,n\\}$.
-
-- A set of states $s \in \mathcal{S}$.
-
-- An observation function $O:\mathcal{S} \times \{1,...,n\} \rightarrow \mathcal{Z}$.
-
-- A set of action spaces $\mathcal{U}={\mathcal{U}\_1} \times ... \times \mathcal{U}\_n$, one per agent $u^{a\_i}\_t \in \mathcal{U}\_i$.
-
-- A transition function: $ s\_{t+1} \sim P( s\_{t+1} | s\_t , \mathbf{u\_t})$ with $\mathbf{u\_t} =(u^{a\_1}\_t, ..., u^{a\_n}\_t)$.
-
-- A reward function per agent:  $r^{a\_i}\_t = R^{a\_i}(s\_{t+1}, s\_t, \mathbf{u\_t})$.
-
-- Agents sometimes store their history $\tau^a\_t \in (\mathcal{Z} \times \mathcal{U})^t$.
-
-- The *goal* of each agent $ a\_i $ is to maximize its total expected sum of (discounted) rewards 
-
-<center> $\mathbb{E}_{\mathbf{\pi}} \left[ \sum_t \gamma^t r_t^{a_i} \right]$ with $\gamma \in [0, 1)$ </center>
-
----
-# Challenges
-
-- Non-stationarity: 
-    
-    Every agent are learning and each updates its policy.
-- Finding and evaluating equilibrium:
-    
-    Does any agent benefits from chaning its policy?
-- Credit assignment:
-    
-    The reward of an agent is function of all agents action.
-- The number of agents: 
-    
-    $|\mathbf{u}|$ scales exponentionnaly with $n$. 
 ---
 
-In Multi-agent settings, the goal of each agent may differ:
+# Different goals
 
 
-1. *Cooperative setting*: all agents share a common goal.
+1. .bold[Cooperation]
 
-    Examples: traffic control, robotics teams,...
+--
 
-2. *Competitive setting*: the gain of an agent equals the loss of other agents.
+2. .bold[Competition]
 
-    Often referred as zero-sum setting, because the sum of rewards of all agents sums to zero.
+--
 
-    Examples: 1v1 board games, 1v1 video games,...
-
-3. *General sum setting*: lies in between the two others.
-
-    Examples: everything else that is not cooperative or competitive, 5v5 video games,...
+3. .bold[General sum]
 
 ---
 class: section
-# Learn to Cooperate
+
+# Learn to cooperate
 
 ---
-# Dec-POMDP
+# Decentralised Partially Observable Markov Decision Process (Dec-POMDP)
 
-In a cooperative setting, it is possible to have a single reward function, each agent receives a same global reward:
+A single global reward
+
 $$
 r^{a\_1}\_t = r^{a\_n}\_t=r\_t = R(s\_{t+1}, s\_t, \mathbf{u\_t}): \mathcal{S}^2 \times \mathcal{U} \rightarrow \mathbb{R}
 $$
 
-Such Markov Games are called Decentralised-POMDP.
+
 
 .center.width-85[![](figures/decpomdp.png)]
 
 ---
+class: middle
+
+# Robotic warehouses
+
+.center.width-85[![](figures/rware.gif)]
+
+.footnote[Add citation]
+
+---
+class: middle
+
+# Multi-Agent Tracking
+
+.center.width-65[![](figures/mate.gif)]
+
+.footnote[Add citation]
+
+---
+class: middle
+
+# StarCraft Multi-Agent Challenge
+
+<center><iframe width="450" height="300" src="https://www.youtube.com/embed/VZ7zmQ_obZ0" title="SMAC: The StarCraft Multi-Agent Challenge" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></center>
+
+.footnote[https://github.com/oxwhirl/smac  Samvelyan, M., Rashid, T., De Witt, C. S., Farquhar, G., Nardelli, N., Rudner, T. G., ...  Whiteson, S. (2019). The starcraft multi-agent challenge.]
+
+---
+class: middle
+
+# StarCraft Multi-Agent Challenge
+
+3M
+
+.center.width-75[![](figures/3m.png)]
+
+3S5Z
+
+.center.width-75[![](figures/3s5z.png)]
+
+.footnote[https://github.com/oxwhirl/smac  Samvelyan, M., Rashid, T., De Witt, C. S., Farquhar, G., Nardelli, N., Rudner, T. G., ...  Whiteson, S. (2019). The starcraft multi-agent challenge.]
+
+---
+class: section
+
+# How to train a team to cooperate?
+
+
+---
 # Centralised controller
 
-Centralised controller:
-- One agent controls all actions.
-- A single joint actions space $\mathcal{U}\_1 \times ... \times \mathcal{U}\_n$.
 
-Problems:
+.grid[
+.kol-2-5[
+- Learn $Q(s\_t, \mathbf{u\_t})$.
 
---
+.bold[Problems:]
 
-- Joint actions space scales exponentially with $n$.
-- What about the partial observability?
-    - Not possible to centralise.
+- $|\mathcal{U}\_1 \times ... \times \mathcal{U}\_n|$.
 
----
+- Partial observability?
 
-# Solutions:
-
-- Decentralised controller.
-    - Naive learner: train each agent with SARL methods.
-- Centralised training with decentralised execution (CTDE). 
-    - Benefit from supplementary information during training, such as the entire state of the game.
-
-
+]
+.kol-3-5[
+.center.width-100[![](figures/central_control.png)]
+]
+]
 
 ---
 
-# Naive learner
-Naive learning:
+#  Decentralised controller
 
-- Ignore the fact that there are multiple learning agents.
-- Provide a first baseline to compare algorithms.
-- Easy to implement.
-- Not so young: a tabular version with IQL (Tan 1993).
+.grid[
+.kol-2-5[
+- Independent Q-Learning: learn $Q\_a(\tau^a\_t, u^a\_t)$
+
+.bold[Problems:]
+
+- Non-stationarity
+
+- Credit assessment
 
 
-Challenges:
-
---
-
-- Non-stationarity:
-    - Other agents are also learning and their policy changes over time.
-
-- Credit assessment: 
-    - How an agent learns whether its actions is the one that lead to good (or bad) reward?
-    - How an agent maximises the joint actions reward knowing only its action?
+]
+.kol-3-5[
+.center.width-100[![](figures/dec_control.png)]
+]
+]
 
 
 ---
-# Value-based methods in CTDE
 
-Independent Q-Learning (IQL):
+# Centralised training with <br> decentralised execution
 
-- Each agent learns its individual $Q\_a(\tau^a\_t, u^a\_t)$ independently.
+It is possible to learn $Q(s\_t, \mathbf{u\_t})$ during training.
+
+- Training in simulator.
+
+- We known $s$ at training.
+
+- We have access to all actions.
 
 
+---
 
-Problem:
+# CTDE Value-based methods
+
+Only $Q\_a(\tau^a\_t, u^a\_t)$ during the execution.
 
 --
 
 
-- How to ensure that $\underset{u^a_t}{\arg\max} Q\_a(\tau^a\_t, u^a\_t)$ maximises $Q(s\_t, \mathbf{u\_t})$ ?
-
-
-Solution: 
+.bold[GOAL]: $\underset{u^a_t}{\arg\max} Q\_a(\tau^a\_t, u^a\_t)$ maximises $Q(s\_t, \mathbf{u\_t})$.
 
 --
 
-- Learn $Q(s\_t, \mathbf{u\_t})$ as a function of all $Q\_a(\tau^a\_t, u^a\_t)$ during training.
+.bold[Solution]: Learn $Q(s\_t, \mathbf{u\_t})$ as a function of all $Q\_a(\tau^a\_t, u^a\_t)$ .
 
 
 ---
@@ -541,7 +563,7 @@ Solution:
 
 Learn $Q(s\_t, \mathbf{u\_t})$ as a function of all $Q\_a(\tau^a\_t, u^a\_t)$ during training.
 
-*Condition: Individual Global Max (IGM)*
+.bold[Individual Global Max:]
 $$
 \underset{\mathbf{u\_t}}{\arg\max} Q(s\_t, \mathbf{u\_t}) 
 =
@@ -554,6 +576,7 @@ $$
 \end{pmatrix}
 $$
 
+???
 
 $Q_a$ is not a $Q$ function anymore, but a utility function used to select actions.
 
@@ -563,88 +586,71 @@ Question: How to satisfy IGM?
 
 ---
 
-# VDN
-
-How to satisfy IGM?
-
-*Value Decomposition Network*:
+# Value Decomposition Network
 $$
     Q(s\_t, \mathbf{u\_t}) = \sum\_{i=1}^n Q\_{a\_i}(\tau^{a\_i}\_t, u^{a\_i}\_t) 
 $$
 
-Problems:
+--
+
+The optimisation procedure follows the Deep Q Network algorithm
+$$
+    \mathcal{L}(\theta) = \mathbb{E}\_{ \langle . \rangle \sim B }
+    \bigg[  \big(r\_{t} + \gamma \underset{\mathbf{u} \in \mathcal{U}}{\max} Q(s\_{t+1}, \mathbf{u}; \theta') - Q(s\_{t}, \mathbf{u\_{t}}; \theta)\big)^{2} \bigg]
+$$
 
 --
 
-- Addition does not allow to build complex functions.
-- Current state information $s\_t$ is not considered.
+Limitations
 
-How can we build non-linear factorisation satisfying IGM? 
+- Addition is not complex.
+- Where is $s\_t$? 
 
 ---
 # QMIX
 
-How to build non-linear factorisation satisfying IGM? 
+We want non-linear factorisation of $Q(s\_t, \mathbf{u\_t})$!
 
+.footnote[Rashid, T., Samvelyan, M., Schroeder, C., Farquhar, G., Foerster, J., Whiteson, S. (2018). Qmix: Monotonic value function factorisation for deep multi-agent reinforcement learning.]
 
-QMIX enforces monotonicity:
+--
 
 $$
     \frac{\partial Q(s\_t, \mathbf{u\_t})}{\partial Q\_{a}(\tau^{a}\_t, u\_t^{a})} \geq 0 \text{ } \forall a \in \{a\_1,..,a\_n\}
 $$
 
-
-
-How to build a non-linear monotonic factorisation of $Q(s\_t, \mathbf{u\_t})$ as a function of every  $Q\_a(\tau^{a}\_t, u^a\_t)$ and $s\_t$ with neural networks?
-
 --
 
-In QMIX, monotonicity is ensured by constraining a *hypernetwork* that computes the weights of a second neural network.
-
----
-
-#QMIX architecture
-
-.center.width-100[![](figures/figures_lesson/qmix_archi.png)]
- 
-
-.footnote[Rashid, T., Samvelyan, M., Schroeder, C., Farquhar, G., Foerster, J., Whiteson, S. (2018). Qmix: Monotonic value function factorisation for deep multi-agent reinforcement learning.]
-
----
-# QMIX
-
-In QMIX:
-
-- <span style="color:red">A hypernetwork $h\_p$</span> takes the state $s\_t$ as input and computes the weights <span style="color:red">W1</span> and <span style="color:red">W2</span> of a  *second neural network*.
-- <span style="color:red">These weights</span> are constrained to be positive and then used in a *feed forward network $h\_o$* to factorise $Q(s\_t,  \mathbf{u\_t})$ with the individual $Q\_a$.
-- A neural network made of monotonic functions and strictly positive weights is monotonic with respect to its inputs.
-$$\rightarrow Q\_{mix}(s\_t, \mathbf{u\_t}) = h\_o\left(Q\_{a\_1}(),..,Q\_{a\_n}(), h\_p(s\_t)\right)$$
-
-The optimisation procedure follows the same principles of DQN algorithm:
-$$
-    \mathcal{L}(\theta) = \mathbb{E}\_{ \langle . \rangle \sim B }
-    \bigg[  \big(r\_{t} + \gamma \underset{\mathbf{u} \in \mathcal{U}}{\max} Q\_{mix}(s\_{t+1}, \mathbf{u}; \theta') - Q\_{mix}(s\_{t}, \mathbf{u\_{t}}; \theta)\big)^{2} \bigg]
-$$
-
-Parameters of individual networks are commonly shared to speed up learning.
-
-
+.center.width-50[![](figures/qmix.png)]
 
 
 ---
-# QMIX results
+# Results in 3M
 
-.center.width-100[![](figures/figures_lesson/qmix_results.png)]
+.center.width-50[![](figures/qmix_fig/base_legend.png)]
+.center.width-80[![](figures/qmix_fig/base.png)]
 
 .footnote[Rashid, T., Samvelyan, M., Schroeder, C., Farquhar, G., Foerster, J., Whiteson, S. (2018). Qmix: Monotonic value function factorisation for deep multi-agent reinforcement learning.]
 
 
+---
+# Deep-Quality Value
 
+
+Deep Q Network:
+$$
+    \mathcal{L}(\theta) = \mathbb{E}\_{\langle s\_{t},u\_{t},r\_{t},s\_{t+1}\rangle \sim B}
+    \bigg[ \big(r\_{t} + \gamma \max\_{u \in \mathcal{U}} Q(s\_{t+1}, u; \theta') - Q(s\_{t}, u\_{t}; \theta)\big)^{2}\bigg]
+$$
+
+Motivation:
+
+$$ V(s\_{t+1}) =\max\_{u} Q(s\_{t+1}, u; \theta')$$
 
 ---
-# DQV
+# Deep Quality-Value
 
-Deep-Quality Value: learn $Q(.;\theta)$ and $V(.;\phi)$ at the same time.
+Learn $Q(.;\theta)$ and $V(.;\phi)$ at the same time.
 
 $$
 \mathcal{L}(\theta) = \mathbb{E}\_{\langle s\_t,u\_t,r\_t,s\_{t+1}\rangle\sim B} \bigg[ \big(r\_t + \gamma V(s\_{t+1}; \phi') - Q(s\_t, u\_t; \theta) \big)^{2} \bigg]
@@ -653,22 +659,30 @@ $$
 \mathcal{L}(\phi) = \mathbb{E}\_{\langle  s\_{t},u\_{t},r\_{t},s\_{t+1}  \rangle\sim B} \bigg[\big(r\_{t} + \gamma V(s\_{t+1}; \phi') - V(s\_{t}; \phi)\big)^{2}\bigg]
 $$
 
-One benefit of DQV:
-- Reduce the overestimation problem of DQN, linked to the max operator.
+--
 
-DQN loss reminder:
-$$
-    \mathcal{L}(\theta) = \mathbb{E}\_{\langle s\_{t},u\_{t},r\_{t},s\_{t+1}\rangle \sim B}
-    \bigg[ \big(r\_{t} + \gamma \max\_{u \in \mathcal{U}} Q(s\_{t+1}, u; \theta') - Q(s\_{t}, u\_{t}; \theta)\big)^{2}\bigg]
-$$
+Benefit :
+- Reduce the overestimation problem of DQN.
 
 .footnote[M. Sabatelli, G. Louppe, P. Geurts, and M. A. Wiering. Deep quality-value (DQV)
 learning. 2018]
----
-# QVMix
-QVMix and QVMix-Max are extensions of the Deep-Quality value family of algorithms to cooperative multi-agent.
 
-QVMix:
+---
+class: middle
+
+# Contribution:
+
+# Extending the Deep Quality-Value Family of Algorithms to Cooperative Multi-Agent Reinforcement Learning.
+
+---
+# QVMix and QVMix-Max
+
+Take the architecture of $Q$ in QMIX to compute both $Q$ and $V$. 
+
+--
+
+.bold[QVMix:]
+
 $$
     \mathcal{L}(\theta) = \mathbb{E}\_{\langle . \rangle \sim B}
     \bigg[\big(r\_{t} + \gamma V(s\_{t+1}; \phi') - Q(s\_{t}, \mathbf{u\_{t}}; \theta)\big)^{2}\bigg]
@@ -678,20 +692,28 @@ $$
     \bigg[\big(r\_{t} + \gamma V(s\_{t+1}; \phi') - V(s\_{t}; \phi)\big)^{2}\bigg]
 $$
 
-QVMix-Max:
+.bold[QVMix-Max:]
 
 $$
     \mathcal{L}(\phi) = \mathbb{E}\_{\langle . \rangle\sim B} 
     \bigg[\big(r\_{t} + \gamma \max\_{\mathbf{u} \in \mathcal{U}} Q(s\_{t+1}, \mathbf{u}; \theta') - V(s\_{t}; \phi)\big)^{2}\bigg]
 $$
 
-The architecture of $V$ and $Q$ are the same as that of $Q$ in QMIX, $V$ has a single output.
 
 
 ---
 #QVMix results
 
-.center.width-100[![](figures/figures_lesson/qvmix_results.png)]
+.grid[
+
+.kol-1-2[
+.center.width-100[3M![](figures/qvmix_3m.png)]
+]
+.kol-1-2[
+.center.width-100[3S5Z![](figures/qvmix_3s5z.png)]
+]]
+.center.width-100[![](figures/qvmix_legend.png)]
+
 
 .footnote[Leroy, P., Ernst, D., Geurts, P., Louppe, G., Pisane, J.,  Sabatelli, M. (2020). QVMix and QVMix-Max: Extending the Deep Quality-Value Family of Algorithms to Cooperative Multi-Agent Reinforcement Learning.]
 
@@ -699,49 +721,99 @@ The architecture of $V$ and $Q$ are the same as that of $Q$ in QMIX, $V$ has a s
 ---
 # QVMix overestimation bias
 
-Estimated $Q$ are higher than the one obtained for QMIX and MAVEN.
+.center.width-90[![](figures/qvmix_overstim.jpg)]
+.center.width-100[![](figures/qvmix_overestim_leg.jpg)]
 
-
-.center.width-100[![](figures/figures_lesson/2m1z3s5zQ.png)]
 
 .footnote[Leroy, P., Ernst, D., Geurts, P., Louppe, G., Pisane, J.,  Sabatelli, M. (2020). QVMix and QVMix-Max: Extending the Deep Quality-Value Family of Algorithms to Cooperative Multi-Agent Reinforcement Learning.]
 
 ---
 
-# QVMix conclusions
+# QVMix and QVMix-Max
 
-- A new CTDE value based method for Dec-POMDP.
+- Learning $V$ as a target for learning $Q$.
+
+- New value based methods for Dec-POMDP:
+    - Indepent learner: IQV and IQV-Max
+    - CTDE: QVMix and QVMix-Max
+
 - Achieve similar and better performance than QMIX.
+
 - Reduce the overestimation bias.
 
 ---
 class: section
 
-# Infrastructure Management Planning
+# Contribution
+
+# IMP-MARL: a Suite of Environments for Large-scale Infrastructure Management Planning via MARL
 
 ---
 
-Infrastructure management planning (IMP) is an application for CTDE methods.
+# Infrastructure management planning
 
-- Decide of inspection and repair actions over time to reduce costs and risks to maintain a system.
+- Maintain a system composed of different parts.
+    - Bridges
+    - Wind farms
 
-- Managing infrastructure can be a Dec-POMDP.
+--
 
-    - SARL: a single centralised controller,
-    - MARL: one agent for each part to be inspected or repaired.
+- .bold[TASK:] Decide which component needs to be inspected or repaired.
+
+--
+
+- .bold[GOAL:] Reduce maintenance cost and failure risks.
+
+--
+
+- .bold[CONTRIBUTION:]
+    - Today, solved with expert-based heuristic.
+    - Can (MA)RL solve this problem?
+    - Do CTDE methods scale well?
 
 
-- This can be applied to any type of system: Civil, maritime, transportation, and urban management setting.
 
-- In this work: simulated deterioration and off-shore wind turbines.
+---
+class: middle
 
-- Goals: 
-
-    - Compare MARL against an expert rule-based heuristic policy (SOTA).
-    - Study the scalability of CTDE methods (up to 100 agents).
+.center.width-100[![](figures/imp_intro.png)]
 
 
+.footnote[
+P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environments for large-scale infrastructure management planning via MARL. 2023 
+]
 
+
+???
+
+
+- State and observations:
+    - Probability on the deterioration state of each part.
+
+- Actions: 
+
+    1. Do-nothing
+    2. Inspect
+    3. Replace/repair
+
+- Maximise the reward:
+
+$$ \sum\_{t=0}^{T-1} \gamma^t \left[ R\_{t,f}+ \sum\_{a=1}^n \left({R\_{t,ins}^a} + {R\_{t,rep}^a}\right)+R\_{t,camp} \right]$$
+
+- Failure cost is $R\_f = c\_F \times p\_{Fsys}$.
+
+encompassing economic, environmental, and societal losses
+
+---
+# A k-out-of-n system
+
+- Fail if less than 4-out-of-5 components work.
+
+- In our work, simulated deterioration of a crack size.
+
+- No correlation between parts.
+
+.width-100[![](figures/environments_v2_a.png)]
 
 .footnote[
 P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environments for large-scale infrastructure management planning via MARL. 2023 
@@ -750,217 +822,266 @@ P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environmen
 
 ---
 
-# IMP  representation
+# How to solve with (MA)RL?
 
-.center.width-100[![](figures/imp_intro.png)]
+- One agent decide for one part of the system.
 
----
+- They all cooperate to maximise the reward.
 
-# IMP definition
-- State and observations:
-    - Belief on the deterioration state of each part.
-    - Typically discredited probabilities on a crack size.
-    - Belief is updated whether or not you inspected a component of the system. 
+$$ \sum\_{t=0}^{T-1} \gamma^t \left[ R\_{t,f}+ \sum\_{a=1}^n \left({R\_{t,ins}^a} + {R\_{t,rep}^a}\right)+R\_{t,camp} \right]$$
 
-- Actions: 
-
-    1. Do-nothing
-    2. Inspect
-    3. Replace/repair
-
-- The return of an episode is $ \sum\_{t=0}^{T-1} \gamma^t \left[ R\_{t,f}+ \sum\_{a=1}^n \left({R\_{t,ins}^a} + {R\_{t,rep}^a}\right)+R\_{t,camp} \right]$.
-
-    - Failure cost is $R\_f = c\_F \times p\_{Fsys}$ encompassing economic, environmental, and societal losses.
-
-
+- .bold[GOAL]: Can (MA)RL be better than the heuristic?
 
 ---
 
-# IMP variations
-.grid[
-.kol-1-2[
-.center.width-100[![](figures/environments_v2_a.png)A k-out-of-n system environment.]
-]
-.kol-1-2[
-.center.width-100[![](figures/environments_v2_b.png)An offshore wind farm environment.]
-]]
+# How better than the heuristic?
 
-.grid[
-.kol-1-2[
-.center.width-100[![](figures/environments_v2_c.png)Uncorrelated and correlated initial damage distribution.]
-]
-.kol-1-2[
-.center.width-100[![](figures/environments_v2_d.png)A campaign cost environment.]
-]]
+Normalised boxplot against the expert rule-based heuristic policy.
 
+.center.width-60[![](figures/plot_explain_top.png)]
+.center.width-60[![](figures/plot_explain_bottom.png)]
 
 ---
 
-# IMP performance
+# QMIX in the k-out-of-n system.
 
-Results are reported as boxplot against the expert rule-based heuristic policy.
+- $n$: from 3 to 100 agents.
+- $H$: the score of the heuristic.
 
-.center.width-100[![](figures/plot_explain_plot_gaussian_2.png)Box plot construction for one setting with 10 seeds.]
+
+.center.width-100[![](figures/boxplot_perc_limit_up_qmix.png)]
+
+---
+.center.width-100[![](figures/box_plot_legend.png)]
+.center.width-40[![](figures/boxplot_perc_limit_up_koutofn.png)]
+
+???
+Better than heuristic
+
+Less better when n is big
+
+huge variance with large n
+
+independent does not work
+
+centralised work well (but more parameter)
 
 
 
 ---
 
+# Correlated initial damage distribution
 
-.center.width-100[![](figures/box_plot_small_dec.png)Performance plot with two different number of agents in three settings.]
+.center.width-100[![](figures/environments_v2_c.png)]
 
-Every boxplot gathers:
-- The best policies from each of 10 executed training realisations.
-- The 25th-75th percentile range, median, minimum, and maximum obtained results.
+---
 
-<!-- Vertically arranging environments with an increasing number of $n$ agents -->
+# Offshore wind farm 
 
-Note that the results are clipped at -100\%.
+.center.width-100[![](figures/environments_v2_b.png)]
+
+---
+
+# Campaign costs
+
+.center.width-100[![](figures/environments_v2_d.png)]
+
+
+---
+class: middle
+
+.center.width-60[![](figures/boxplot_perc_limit_up.png)]
+.center.width-60[![](figures/boxplot_perc_limit_down.png)]
 
 
 ---
 
-.center.width-100[![](figures/boxplot_perc_limit_up.png)]
+# IMP-MARL
 
----
+- Six new real-world environments.
 
-.center.width-100[![](figures/boxplot_perc_limit_down.png)]
+- CTDE methods can perform better than the expert-based heuristic.
 
----
+- IMP environments demand cooperation among agents: 
+    CTDE $>>$ Decentralised.
 
-# Results:
+--
 
-- MARL-based strategies outperform expert-based heuristic policies.
-- IMP challenge.
-- Campaign cost environments.
-- Centralised RL methods do not scale with the number of agents.
-- IMP demands cooperation among agents.
-- Overall, CTDE methods generate more effective IMP policies than the other investigated methods.
-
----
-
-# IMP conclusions
-
- 
-- CTDE methods generally outperform heuristics.
-
-- Centralised RL methods do not scale well with the number of agents.
-
-- IMP environments demand cooperation among agents: CTDE $>>$ Decentralised.
-
-- Remaining challenges: correlated environments and campaign costs.
-
+- Remaining challenges:
+    - Scalability.
+    - Correlated distribution. 
+    - Campaign costs.
 
 
 ---
 class: section
 
-# Training a team to compete
+# How to train a team to compete against others?
 
 ---
 # Competition
 
-- In a two player competition, gain of one agent is equal loss of the other.
-- In AlphaGo, self-play with MCTS.
-- In AlphaStar, population based training.
-- The goal: train against many strategies.
-- What if we do the same with two teams instead of two agents?
+- In a two player competition:
+    - Agents need to be good against many strategies.
+    - Agents should adapt!
+
+--
+
+- How to play chess?
+
+Agent learns by playing against itself with MCTS - AlphaGo
+
+--
+
+- How to play StarCraft 2?
+
+A population of agents play against each other to face many strategies - AlphaStar
+
+--
+
+.bold[*Can we use these learning scenario to train teams with CTDE methods?*]
+
+---
+
+class: section
+
+# Contribution
+
+
+# Value-based CTDE Methods in Symmetric Two-team Markov Game: from Cooperation to Team Competition
 
 ---
 # Two team Markov game
-Two symmetric teams:
-- A set of $n$ agents, each represented by $a$ or $a\_{i, j}, i \in  \{1,...,n\}, j \in \{1, 2\}$.
-- A set of states $s \in \mathcal{S}$.
-- An observation function $O:\mathcal{S} \times \{1,...,n\} \rightarrow \mathcal{Z}$.
-- A set of action spaces $\mathcal{U}=\mathcal{U}\_1 \times ... \times \mathcal{U}\_n$, one per agent $u^{a\_{i,j}}\_{t} \in \mathcal{U}\_i \forall j$.
-- A transition function: $s\_{t+1} \sim P(s\_{t+1} | s\_t, \mathbf{u\_t})$,  $\mathbf{u\_t}=(u^{a\_{i,j}}\_t)\_{i \in \{1,..,n\};j \in \{1,2\}} $.
-- A reward function per team:  $r^j\_t = R^j(s\_{t+1}, s\_t, \mathbf{u\_t})$.
-- Agents store their history $\tau^a\_t \in (\mathcal{Z} \times \mathcal{U})^t$.
+
+- Two symmetric teams, same agents face each other.
+
+- 2 rewards, one per team $r^j\_t = R^j(s\_{t+1}, s\_t, \mathbf{u\_t})$.
+
 - The goal of each agent $a\_i$ is to maximize its total expected sum of (discounted) rewards $\sum\_{t=0}^{T} \gamma^t r^{a\_i}\_t$.
 
+New Competitive StarCraft Multi-Agent Challenge
 
+.center.width-50[3M![](figures/3m.png)]
 
----
-# Two team Markov game
-How to train a team of agents to compete?
+.center.width-50[3S5Z![](figures/3s5z.png)]
 
-Train against multiple evolving strategies!
-
-Teams are trained with CTDE methods: QMIX, QVMix and MAVEN.
-
-Teams are trained with three different learning scenarios:
-1. Against a stationary strategy (heuristic) like a Dec-POMDP.
-2. Self-play, against itself, using transitions as both teams to train.
-3. Within a population of five training teams.
-    Uniform chance to play against itself or one of the four other team.
 
 ---
 # The empirical study
 
-- New Competitive StarCraft Multi-Agent Challenge.
-- Teams trained with $10^7$ timesteps in 2 environments ($3m$ and $3s5z$).
-- Each method/scenario pair has been executed 10 times.
-- Evaluation is performed with Elo scores and win rates.
+Teams are trained with CTDE methods: QMIX, QVMix and MAVEN.
+
+--
+
+Teams are trained with three different learning scenarios:
+
+--
+
+1. Against a stationary strategy (.bold[heuristic]) like in a Dec-POMDP.
+
+--
+
+2. .bold[Self-play], against itself, using all played transitions to train.
+
+--
+
+3. Within a .bold[population] of five training teams.
+    - Uniform chance to play against any of the five teams.
 
 ---
-# Competitive StarCraft Multi-Agent Challenge
+class: middle
 
-- SMAC is initially a Dec-POMDP environment based on StarCraft 2.
-- Two teams learn to compete against each other.
-- We transformed it in a competitive setting and train both teams.
+# Which team is the best?
 
-<center><iframe width="450" height="300" src="https://www.youtube.com/embed/VZ7zmQ_obZ0" title="SMAC: The StarCraft Multi-Agent Challenge" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></center>
+.bold[GOAL:] Be good against many strategies.
 
-.footnote[https://github.com/oxwhirl/smac  Samvelyan, M., Rashid, T., De Witt, C. S., Farquhar, G., Nardelli, N., Rudner, T. G., ...  Whiteson, S. (2019). The starcraft multi-agent challenge.]
-
-
+Create groups of teams evaluated together.
 
 ---
 # Elo score
 
-The Elo rating system assign each player of a population with a rating $R$ to rank them.
+Assign a rating $R$ to compute the probability of winning.
 
-- We can compute the probability that a player will win against B.
-- Let $R\_A$ and $R\_B$ be the ELO scores of player A and B, $E\_A$ = proba A wins.
-$$
-    E\_A=\frac{10^{R\_A/400}}{10^{R\_A/400} + 10^{R\_B/400}}
-    \text{ and }
-    E\_B=\frac{10^{R\_B/400}}{10^{R\_A/400} + 10^{R\_B/400}}
-$$
 --
 
-- $400$ is a parameter. If the Elo score of player A is 400 points above that of B, it has a ten-times greater chance of defeating B.
-- New score where $cst$ is a constant that defines the maximum possible update of the Elo score (10 in our paper, typically 32).
+- Let $R\_A$ and $R\_B$ be the ELO scores of player A and B.
+- Probabilities:
+
+$$
+    E\_A=\frac{10^{R\_A/400}}{10^{R\_A/400} + 10^{R\_B/400}}
+$$
+
+$$
+    E\_B=\frac{10^{R\_B/400}}{10^{R\_A/400} + 10^{R\_B/400}}
+$$
+
+--
+
+Update
+
 $$
     R'\_A = R\_A + cst \* (S\_A - E\_A)
 $$
 - $S\_A$ is equal to $1$ for a win, $0$ for a loss and $0.5$ for a draw.
 
+???
+
+- $400$ is a parameter. If the Elo score of player A is 400 points above that of B, it has a ten-times greater chance of defeating B.
+
+- New score where $cst$ is a constant that defines the maximum possible update of the Elo score (10 in our paper, typically 32).
 
 ---
-# Two team Markov game: results
 
-*H* = trained against heuristic,
-*S* = self-play,
-*P* = within a population,
-*BP* = the 10 bests of each population.
+First, we group teams by training method.
 
-Elo after training (Elo score obtained in different test populations) in the $3m$ map.
+- .bold[H] = trained against heuristic,
+- .bold[S] = self-play,
+- .bold[P] = within a population,
+- .bold[BP] = the 10 bests of each population.
+
+QVMix in the 3M map:
+
+.center.width-70[![](figures/popu_qvmix.png)]
+
+
+---
+class: middle
+
 .center.width-100[![](figures/figures_lesson/2team1.png)]
 
 .footnote[Leroy, P., Pisane, J., Ernst, D. (2022). Value-based CTDE Methods in Symmetric Two-team Markov Game: from Cooperation to Team Competition.]
 
 ---
-# Two team Markov game: results
-All together:
+class: middle
+
+All together: same conclucion!
+
 .center.width-80[![](figures/figures_lesson/2teams3.png)]
 
-Conclusions:
-- Training teams within a population of learning teams is the best learning scenario, when each team plays the same number of timesteps for training purposes.
-- This is irrespective of whether or not the stationary strategy was better than all trained teams.
-- A selection procedure is required in the same training population.
+.footnote[Leroy, P., Pisane, J., Ernst, D. (2022). Value-based CTDE Methods in Symmetric Two-team Markov Game: from Cooperation to Team Competition.]
+
+---
+
+# 3S5Z
+
+What if the heuristic is the best?
+
+.center.width-80[![](figures/3s5z_tiny_all_h_clean.png)]
+
+
 
 .footnote[Leroy, P., Pisane, J., Ernst, D. (2022). Value-based CTDE Methods in Symmetric Two-team Markov Game: from Cooperation to Team Competition.]
+
+---
+
+# Conclusions
+
+- Training teams within a population of learning teams is the best learning scenario.
+
+- This is irrespective of whether or not the stationary strategy was better than all trained teams.
+
+- A selection procedure is required in the same training population.
+
 
 ---
 class: section
@@ -968,13 +1089,20 @@ class: section
 # Conclusions
 
 ---
-- What is reinforcement learning.
-- What are the challenges when several agents learn in the environment.
+# Conclusions
+
+- What is (multi-agent) reinforcement learning.
+
 - How to train a team of agents to cooperate.
+
 - How to train a team of agents to compete against several strategies.
+
+--
+
+# Reinforcement Learning is not DEAD !
 
 ---
 class: end-slide, center
 count: false
 
-The end.
+Thank you.
