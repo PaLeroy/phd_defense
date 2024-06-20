@@ -14,7 +14,7 @@ June 28, 2024
 # Today
 <br><br>
 
-- What is reinforcement learning (RL)?
+- Reinforcement learning and multi-agent reinforcement learning.
 <br><br>
 
 - What happens when multiple agents learn together?
@@ -59,6 +59,8 @@ To provide some intuitions, let us watch this video of a chicken trained to pick
 
 Everytime the chicken 
 
+USE RL words
+
 ---
 class: middle
 
@@ -93,25 +95,26 @@ An agent is learning by .bold[interacting] in its .bold[environment] to maximise
 
 .footnote[R. S. Sutton and A. G. Barto. Reinforcement learning, second edition: An introduction. 2018]
 
-<!-- ---
+???
+Explain more the state and the action!
 
-An .bold[MDP] is defined by a tuple ($\mathcal{S}$, $\mathcal{U}$,${P}$,${R}$):
-
-
-- State space $s_t \in \mathcal{S}$.
-- Action space $u_t \in \mathcal{U}$.
-- Transition function $s\_{t+1} = P(s\_t, u\_t)$ defines the state $s_{t+1}$ reached after taking the action $u_t$ in state $s_t$.
-- Reward function $r\_t=R(s\_{t+1})$ defines the reward obtained.
-
-.center[.width-100[![](figures/MDP_words.png)]] -->
 
 ---
 
 # Chicken environment
 
-.center[States $s$: chicken location $(x, y)$.]
+.grid[
+.kol-1-3[
+.center[States $s$
 
-.center[.width-80[![](figures/chicken_env.png)]]
+Chicken location $(x, y)$]
+]
+.kol-2-3[
+.center[.width-100[![](figures/chicken_env.png)]]
+]]
+
+
+
 
 ---
 
@@ -154,9 +157,9 @@ Reward function: $+1$ if $s = (4,4)$, $-1$ if $s = (2, 4)$, $0$ otherwise.
 
 ---
 
-# Goal ?
+# Goal
 
-For each $s=(x, y)$, we want to choose the .bold[best action!]
+.center[For each $s=(x, y)$, we want to choose the .bold[best action!]]
 
 
 .center[.width-80[![](figures/chicken_env_policy.png)]]
@@ -165,7 +168,12 @@ For each $s=(x, y)$, we want to choose the .bold[best action!]
 
 class: middle
 
-The agent learns the policy $\pi:\mathcal{S}\to\mathcal{U}$ that maximises
+# It is hard because model
+
+# Goal
+
+
+The agent learns the policy $\pi$ mapping a state $s$ to an action $u$ that maximises
 
 $$\mathbb{E}_{\pi} \left[ \sum_t \gamma^t r_t \right].$$
 
@@ -248,12 +256,14 @@ $$ \forall (s, u),  Q(s, u) = 0$$
 
 $$ Q(s\_t, u\_t) \leftarrow Q(s\_t, u\_t) + \alpha \left[ r\_t + \gamma \max\_u Q(s\_{t+1}, u) - Q(s\_t, u\_t) \right]$$
 
+???
+C'est pas la vraie fonction de Q que tu update avec cette fonction mais une approximation (Q chapeau?). L'équation de Bellman avec le vrai Q c'est un = et pas une flèche d'update.
 
 ---
 
 # Epsilon greedy
 
-How agent selects action?
+How agent selects action during training?
 - Take the best action most of the time
     
 $$\pi^\* (s) =\arg\max\_u  Q(s, u),$$
@@ -300,7 +310,8 @@ Minimise the loss
 $$
 \mathcal{L}(\theta) = \mathbb{E}\_{\langle s\_{t},u\_{t},r\_{t},s\_{t+1} \rangle \sim B} \big(r\_{t} + \gamma  \underset{u \in \mathcal{U}}{\max} Q(s\_{t+1}, u; \theta') - Q(s\_{t}, u\_{t}; \theta)\big)^2$$
 
-
+- The replay buffer $B$ is a collection of transitions.
+- $\theta'$ is the target network
 ???
 - The replay buffer $B$ is a collection of transitions.
 - Sampling transitions allows to update the network.
@@ -332,6 +343,8 @@ Talk about the markov property.
 
 We evaluate any policy $\pi$ with the .bold[state value function] $V$:
 
+talk about pi
+
 $$ V(s)=\mathbb{E}\_{\pi}\left[r\_t + \gamma V(s\_{t+1})|s\_t=s\right] $$ 
 
 --
@@ -353,6 +366,7 @@ $$ V(s)=\mathbb{E}\_{\pi}\left[r\_t + \gamma V(s\_{t+1})|s\_t=s\right] $$
     - $\pi(u|\tau)$, where $\tau$ is action-observation history.
     - Recurrent neural network.
 
+y'a beaucoup ici, il faut alléger
 
 ---
 # Examples of RL application
@@ -363,6 +377,9 @@ $$ V(s)=\mathbb{E}\_{\pi}\left[r\_t + \gamma V(s\_{t+1})|s\_t=s\right] $$
 - Supply chain management, warehouses
 - Robotics
 
+- Provide state and action and reward intuitions.
+
+
 ---
 # Summary
 
@@ -370,7 +387,7 @@ $$ V(s)=\mathbb{E}\_{\pi}\left[r\_t + \gamma V(s\_{t+1})|s\_t=s\right] $$
 
 - Value based method provides $Q(s, u)$, the best sum of discounted rewards.
 
-- The agent select the best action $\arg\max\_u Q(s, u)$ in state $s$.
+- The agents select the best action $\arg\max\_u Q(s, u)$ in state $s$.
 
 - It is possible to approximate $Q(s, u)$ or $\pi(u|s)$ with neural networks.
 
@@ -390,7 +407,7 @@ What changes if the fox can move and also learn?
 
 # Stochastic game
 
-All agents learn a policy $\pi^{a}$ to maximise
+All agents $a\_i \in \{ 1,...,n \}$ learn a policy $\pi^{a}$ to maximise
 
 $$ \mathbb{E}\_\pi \left[ \sum\_t \gamma^t r_t^{a\_i} \right] \text{ where }\pi = { \pi^{a\_1}, .. ,\pi^{a\_n} \} $$
 
@@ -423,7 +440,11 @@ class: middle
 ---
 class: section
 
-# Learn to cooperate
+# Learning to cooperate
+
+- Background
+- Train a team to cooperate
+- Contributions
 
 ---
 # Decentralised Partially Observable Markov Decision Process (Dec-POMDP)
@@ -443,6 +464,8 @@ class: middle
 
 # Robotic warehouses
 
+Slow down animation
+
 .center.width-85[![](figures/rware.gif)]
 
 .footnote[Add citation]
@@ -461,9 +484,16 @@ class: middle
 
 # StarCraft Multi-Agent Challenge
 
+Cooperation because opponents does not learn!
+
 <center><iframe width="450" height="300" src="https://www.youtube.com/embed/VZ7zmQ_obZ0" title="SMAC: The StarCraft Multi-Agent Challenge" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></center>
 
 .footnote[https://github.com/oxwhirl/smac  Samvelyan, M., Rashid, T., De Witt, C. S., Farquhar, G., Nardelli, N., Rudner, T. G., ...  Whiteson, S. (2019). The starcraft multi-agent challenge.]
+
+???
+We do not play Starcraft!
+
+More details on the setting
 
 ---
 class: middle
@@ -483,7 +513,7 @@ class: middle
 ---
 class: section
 
-# How to train a team to cooperate?
+# Train a team to cooperate
 
 
 ---
@@ -530,13 +560,13 @@ class: section
 
 ---
 
-# Centralised training with <br> decentralised execution
+# Centralised training with <br> decentralised execution (CTDE)
 
 It is possible to learn $Q(s\_t, \mathbf{u\_t})$ during training.
 
 - Training in simulator.
 
-- We known $s$ at training.
+- We know $s$ at training.
 
 - We have access to all actions.
 
@@ -554,7 +584,7 @@ Only $Q\_a(\tau^a\_t, u^a\_t)$ during the execution.
 
 --
 
-.bold[Solution]: Learn $Q(s\_t, \mathbf{u\_t})$ as a function of all $Q\_a(\tau^a\_t, u^a\_t)$ .
+.bold[Solution]: Learn $Q(s\_t, \mathbf{u\_t})$ as a monotonic factorisation of all $Q\_a(\tau^a\_t, u^a\_t)$ .
 
 
 ---
@@ -675,7 +705,7 @@ class: middle
 # Extending the Deep Quality-Value Family of Algorithms to Cooperative Multi-Agent Reinforcement Learning.
 
 ---
-# QVMix and QVMix-Max
+# QVMix
 
 Take the architecture of $Q$ in QMIX to compute both $Q$ and $V$. 
 
@@ -692,13 +722,14 @@ $$
     \bigg[\big(r\_{t} + \gamma V(s\_{t+1}; \phi') - V(s\_{t}; \phi)\big)^{2}\bigg]
 $$
 
+<!-- 
 .bold[QVMix-Max:]
 
 $$
     \mathcal{L}(\phi) = \mathbb{E}\_{\langle . \rangle\sim B} 
     \bigg[\big(r\_{t} + \gamma \max\_{\mathbf{u} \in \mathcal{U}} Q(s\_{t+1}, \mathbf{u}; \theta') - V(s\_{t}; \phi)\big)^{2}\bigg]
 $$
-
+ -->
 
 
 ---
@@ -737,7 +768,7 @@ $$
     - Indepent learner: IQV and IQV-Max
     - CTDE: QVMix and QVMix-Max
 
-- Achieve similar and better performance than QMIX.
+- Achieve similar and sometimes better performance than QMIX.
 
 - Reduce the overestimation bias.
 
@@ -798,7 +829,7 @@ P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environmen
 
 - Maximise the reward:
 
-$$ \sum\_{t=0}^{T-1} \gamma^t \left[ R\_{t,f}+ \sum\_{a=1}^n \left({R\_{t,ins}^a} + {R\_{t,rep}^a}\right)+R\_{t,camp} \right]$$
+$$ \sum\_{t=0}^{T-1} \gamma^t \left[ R\_{t,f}+ \sum\_{a=1}^n \left({R\_{t,ins}^a} + {R\_{t,rep}^a}\right) \right]$$
 
 - Failure cost is $R\_f = c\_F \times p\_{Fsys}$.
 
@@ -828,7 +859,7 @@ P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environmen
 
 - They all cooperate to maximise the reward.
 
-$$ \sum\_{t=0}^{T-1} \gamma^t \left[ R\_{t,f}+ \sum\_{a=1}^n \left({R\_{t,ins}^a} + {R\_{t,rep}^a}\right)+R\_{t,camp} \right]$$
+$$ \sum\_{t=0}^{T-1} \gamma^t \left[ R\_{t,f}+ \sum\_{a=1}^n \left({R\_{t,ins}^a} + {R\_{t,rep}^a}\right)  \right]$$
 
 - .bold[GOAL]: Can (MA)RL be better than the heuristic?
 
@@ -866,6 +897,8 @@ independent does not work
 
 centralised work well (but more parameter)
 
+WHY does perf decreases when n increases?
+
 
 
 ---
@@ -886,6 +919,7 @@ centralised work well (but more parameter)
 
 .center.width-100[![](figures/environments_v2_d.png)]
 
+$$ \sum\_{t=0}^{T-1} \gamma^t \left[ R\_{t,f}+ \sum\_{a=1}^n \left({R\_{t,ins}^a} + {R\_{t,rep}^a}\right)+R\_{t,camp} \right]$$
 
 ---
 class: middle
@@ -957,7 +991,7 @@ class: section
 
 - 2 rewards, one per team $r^j\_t = R^j(s\_{t+1}, s\_t, \mathbf{u\_t})$.
 
-- The goal of each agent $a\_i$ is to maximize its total expected sum of (discounted) rewards $\sum\_{t=0}^{T} \gamma^t r^{a\_i}\_t$.
+- The goal of each agent $a\_{i, j}$ is to maximize $\sum\_{t} \gamma^t r^{j}\_t$.
 
 New Competitive StarCraft Multi-Agent Challenge
 
@@ -987,6 +1021,10 @@ Teams are trained with three different learning scenarios:
 
 3. Within a .bold[population] of five training teams.
     - Uniform chance to play against any of the five teams.
+
+???
+
+TAKE YOUR TIME
 
 ---
 class: middle
@@ -1074,13 +1112,18 @@ What if the heuristic is the best?
 
 ---
 
-# Conclusions
+# Two-team Markov game 
 
-- Training teams within a population of learning teams is the best learning scenario.
+- Trained teams:
+    1. Against a stationary strategy,
+    2. In self-play,
+    3. In a population of learning teams.
 
-- This is irrespective of whether or not the stationary strategy was better than all trained teams.
+- Training within a population is the best.
 
-- A selection procedure is required in the same training population.
+- Whether or not the stationary strategy is better than all.
+
+- A selection procedure is required in the population.
 
 
 ---
@@ -1101,8 +1144,4 @@ class: section
 
 # Reinforcement Learning is not DEAD !
 
----
-class: end-slide, center
-count: false
-
-Thank you.
+BACKUP SLIDES!
