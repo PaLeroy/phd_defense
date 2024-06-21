@@ -217,29 +217,34 @@ Easy to find the optimal policy, why do we need reinforcement learning?
 ---
 # What knows the agent?
 
-1. It is in the state (1, 1),
+1. It is in the .bold[state (1, 1)],
 
-2. It has the choice between four actions.
+2. It has the choice between .bold[four actions].
 
 --
+count: false
 
 It does not know:
 
 - What means (1, 1),
 
 --
+count: false
 
 - The third action is "Up",
 
 --
+count: false
 
 - Taking the third action will change the state to (2, 1),
 
 --
+count: false
 
 - The reward in (2, 1) is 0.
 
 --
+count: false
 
 It needs to .bold[explore], by trials and errors, to learn the optimal policy.
 
@@ -264,6 +269,7 @@ Provide state and action and reward intuitions.
 - It does not know the environment and needs to explore.
 
 --
+count: false
 
 # What if the fox can move?
 
@@ -301,15 +307,17 @@ class: middle
 # Different goals
 
 
-1. .bold[Cooperation]
+- .bold[Cooperation]
 
 --
+count: false
 
-2. .bold[Competition]
+- .bold[Competition]
 
 --
+count: false
 
-3. .bold[General sum]
+- .bold[General sum]
 
 ---
 class: section
@@ -336,6 +344,7 @@ How can I know which is the best action?
 Transition function defines a probability to reach $s\_{t+1} \sim P(s\_{t+1}|s\_t, u\_t)$.
 
 --
+count: false
 
 .bold[Markov Decision Process (MDP).]
 
@@ -352,46 +361,59 @@ Talk about the markov property.
 What is the expected sum of discounted rewards from $s$ following $\pi$?
 
 --
+count: false
 
-This is the .bold[state value function] $V$.
-
-$$ V^{\pi}(s)= \mathbb{E}_{\pi} \left[ \sum_t \gamma^t r_t \right]$$ 
-
---
-
-$$ V^{\pi}(s)= \mathbb{E}\_{\pi}\left[r\_t + \gamma V^{\pi}(s\_{t+1})|s\_t=s\right]$$
+$$\mathbb{E}\_{\pi} [ r\_t + \gamma r\_{t+1} + \gamma^2 r\_{t+2} + \gamma^3 r\_{t+3} + \gamma^4 r\_{t+4}+... | s\_t = s]$$
 
 --
+count: false
 
-The .bold[optimal policy] is
+
+This is the .bold[state value function] $V$
+
+$$ V^{\pi}(s)= \mathbb{E}_{\pi} \left[ \sum_t \gamma^t r_t | s\_t = s \right].$$ 
+
+--
+count: false
+
+An .bold[optimal policy] satisfies
 
 $$ \pi^\*(s) = \arg\max\_\pi V^{\pi}(s).$$
+
+???
+
+.bold[IF WE HAVE two policies]
+.bold[What is we can directly compare actions?]
 
 ---
 
 # The state-action value function
 
-From $s$, taking $u$, what is the expected sum of discounted reward following $\pi$?
+From $s$, taking $u$, what is the expected sum of discounted rewards following $\pi$?
 
 --
+count: false
 
-$$ Q^\pi(s\_t, u\_t) = \mathbb{E}\_{\pi}\left[r\_t + \gamma V^{\pi}(s\_{t+1})|s\_t=s, u\_t = u\right]$$
-
---
-
-Allows the deterministic policy 
-
-$$ \pi(s) = \arg\max\_u Q^\pi (s, u) $$
+$$ Q^\pi(s, u) = \mathbb{E}\_{\pi}\left[r\_t + \gamma V^{\pi}(s\_{t+1})|s\_t=s, u\_t = u\right]$$
 
 --
+count: false
 
 Bellman optimality equation
 
 $$ Q^{\pi^\*}(s, u) = \max\_{\pi}Q^\pi(s, u) $$
 
 --
+count: false
 
 $$  Q^{\pi^\*}(s, u) = \mathbb{E}\_{\pi^\*}[r\_t + \gamma \max\_{u'} Q^{\pi^\*}(s\_{t+1}, u') |s\_t=s, u\_t=u]$$
+
+--
+count: false
+
+The optimal deterministic policy is
+
+$$ \pi^\*(s) = \arg\max\_u Q^{\pi^\*} (s, u) $$
 
 ---
 
@@ -402,13 +424,22 @@ If we know the optimal Q values, we know the optimal policy.
 $$ \pi^\*(s) = \arg\max\_u Q^{\pi^\*} (s, u) $$
 
 --
+count: false
 
-- Play and update:
+Play and learn $Q^{\pi^\*}$:
 
 $$ \widehat{Q}(s\_t, u\_t) \leftarrow \widehat{Q}(s\_t, u\_t) + \alpha \left[ r\_t + \gamma \max\_u \widehat{Q}(s\_{t+1}, u) - \widehat{Q}(s\_t, u\_t) \right]$$
 
 - Learning rate $\alpha \in [0, 1].$ 
 
+--
+count: false
+
+- What if overestimation?
+$$\widehat{Q}(s\_t, u\_t) >  r\_t + \gamma \max\_u \widehat{Q}(s\_{t+1}, u)$$
+
+???
+PAuse à la fin sur les limitations de DQN
 
 ---
 
@@ -421,11 +452,15 @@ Minimise the loss
 $$
 \mathcal{L}(\theta) = \mathbb{E}\_{\langle s\_{t},u\_{t},r\_{t},s\_{t+1} \rangle \sim B} \big(r\_{t} + \gamma  \underset{u \in \mathcal{U}}{\max} Q(s\_{t+1}, u; \theta') - Q(s\_{t}, u\_{t}; \theta)\big)^2$$
 
+--
+count:false
+
 - The replay buffer $B$ is a collection of transitions,
 - $\theta'$ is the target network,
 - Transitions with $\epsilon$-greedy policy.
 
 --
+count: false
 
 If $s$ are images, $\theta$ is a CNN.
 
@@ -490,9 +525,9 @@ class: middle
 
 # StarCraft Multi-Agent Challenge
 
-Cooperation because opponents does not learn!
+Cooperation because opponents are not learning!
 
-<center><iframe width="450" height="300" src="https://www.youtube.com/embed/VZ7zmQ_obZ0" title="SMAC: The StarCraft Multi-Agent Challenge" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></center>
+<center><iframe width="600" height="400" src="https://www.youtube.com/embed/VZ7zmQ_obZ0" title="SMAC: The StarCraft Multi-Agent Challenge" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></center>
 
 .footnote[https://github.com/oxwhirl/smac  Samvelyan, M., Rashid, T., De Witt, C. S., Farquhar, G., Nardelli, N., Rudner, T. G., ...  Whiteson, S. (2019). The starcraft multi-agent challenge.]
 
@@ -520,16 +555,17 @@ class: middle
 # Centralised controller
 
 --
+count: false
 
 .grid[
 .kol-2-5[
-- Learn $Q(s\_t, \mathbf{u\_t})$.
+- Learn $Q(s_t, \mathbf{u\_t})$.
 
 .bold[Problems:]
 
-- $|\mathcal{U}\_1 \times ... \times \mathcal{U}\_n|$.
+- $|\mathcal{U}\_1 \times ... \times \mathcal{U}\_n|$,
 
-- Partial observability?
+- Partial observability? $Q(o_t^1, .., o_t^n, \mathbf{u\_t})$
 
 ]
 .kol-3-5[
@@ -541,15 +577,18 @@ class: middle
 
 #  Decentralised controller
 
+--
+count: false
+
 .grid[
 .kol-2-5[
-- Independent Q-Learning: learn $Q\_a(\tau^a\_t, u^a\_t)$
+- Independent Q-Learning, learn $Q\_a(\tau^a\_t, u^a\_t)$
 
 .bold[Problems:]
 
-- Non-stationarity
+- Non-stationarity,
 
-- Credit assessment
+- credit assessment.
 
 
 ]
@@ -562,13 +601,22 @@ class: middle
 
 # Centralised training with <br> decentralised execution (CTDE)
 
-It is possible to learn $Q(s\_t, \mathbf{u\_t})$ during training.
+During training:
+
+- It is possible to learn $Q(s\_t, \mathbf{u\_t})$.
 
 - Training in simulator.
 
 - We know $s$ at training.
 
 - We have access to all actions.
+
+--
+count: false
+
+At execution:
+
+- It is NOT possible to use $Q(s\_t, \mathbf{u\_t})$ during execution.
 
 
 ---
@@ -578,13 +626,15 @@ It is possible to learn $Q(s\_t, \mathbf{u\_t})$ during training.
 Only $Q\_a(\tau^a\_t, u^a\_t)$ during the execution.
 
 --
+count: false
 
 
 .bold[GOAL]: $\underset{u^a_t}{\arg\max} Q\_a(\tau^a\_t, u^a\_t)$ maximises $Q(s\_t, \mathbf{u\_t})$.
 
 --
+count: false
 
-.bold[Solution]: Learn $Q(s\_t, \mathbf{u\_t})$ as a factorisation of all $Q\_a(\tau^a\_t, u^a\_t)$ .
+.bold[Solution]: Learn $Q(s\_t, \mathbf{u\_t})$ as a function of all $Q\_a(\tau^a\_t, u^a\_t)$ .
 
 
 ---
@@ -606,6 +656,7 @@ $$
 $$
 
 --
+count: false
 
 Value Decomposition Network (VDN)
 
@@ -614,6 +665,7 @@ $$
 $$
 
 --
+count: false
 
 The optimisation procedure follows the Deep Q Network algorithm
 $$
@@ -633,24 +685,26 @@ Question: How to satisfy IGM?
 ---
 # QMIX
 
-We want non-linear factorisation of $Q(s\_t, \mathbf{u\_t})$!
+Non-linear factorisation of $Q(s\_t, \mathbf{u\_t})$.
 
 .footnote[Rashid, T., Samvelyan, M., Schroeder, C., Farquhar, G., Foerster, J., Whiteson, S. (2018). Qmix: Monotonic value function factorisation for deep multi-agent reinforcement learning.]
 
 --
+count: false
 
 $$
     \frac{\partial Q(s\_t, \mathbf{u\_t})}{\partial Q\_{a}(\tau^{a}\_t, u\_t^{a})} \geq 0 \text{ } \forall a \in \{a\_1,..,a\_n\}
 $$
 
 --
+count: false
 
 .center.width-50[![](figures/qmix.png)]
 
 ---
 class: middle
 
-Are there better methods than Deep Q Network?
+Are there better methods than Deep Q Network to learn $Q^{\pi*}(s, u)$?
 
 ---
 # Deep Quality-Value
@@ -670,14 +724,21 @@ $$ V(s\_{t+1}) =\max\_{u} Q(s\_{t+1}, u; \theta')$$
 
 Learn $Q(.;\theta)$ and $V(.;\phi)$ at the same time.
 
+--
+count:false
+
 $$
 \mathcal{L}(\theta) = \mathbb{E}\_{\langle s\_t,u\_t,r\_t,s\_{t+1}\rangle\sim B} \bigg[ \big(r\_t + \gamma V(s\_{t+1}; \phi') - Q(s\_t, u\_t; \theta) \big)^{2} \bigg]
 $$
+
+--
+
 $$
 \mathcal{L}(\phi) = \mathbb{E}\_{\langle  s\_{t},u\_{t},r\_{t},s\_{t+1}  \rangle\sim B} \bigg[\big(r\_{t} + \gamma V(s\_{t+1}; \phi') - V(s\_{t}; \phi)\big)^{2}\bigg]
 $$
 
 --
+count: false
 
 Benefit :
 - Reduce the overestimation problem of DQN.
@@ -693,11 +754,20 @@ class: middle
 # Extending the Deep Quality-Value Family of Algorithms to Cooperative Multi-Agent Reinforcement Learning.
 
 ---
+# Motivation
+
+- Deep Quality-Value outperform Deep Q Network.
+
+- Can we improve QMIX by learning both $Q$ and $V$?
+
+
+---
 # QVMix
 
 Take the architecture of $Q$ in QMIX to compute both $Q$ and $V$. 
 
 --
+count: false
 
 .bold[QVMix:]
 
@@ -710,21 +780,19 @@ $$
     \bigg[\big(r\_{t} + \gamma V(s\_{t+1}; \phi') - V(s\_{t}; \phi)\big)^{2}\bigg]
 $$
 
-<!-- 
-.bold[QVMix-Max:]
 
-$$
-    \mathcal{L}(\phi) = \mathbb{E}\_{\langle . \rangle\sim B} 
-    \bigg[\big(r\_{t} + \gamma \max\_{\mathbf{u} \in \mathcal{U}} Q(s\_{t+1}, \mathbf{u}; \theta') - V(s\_{t}; \phi)\big)^{2}\bigg]
-$$
- -->
 
 
 ---
 #QVMix results
 
-.grid[
+- In 3M, every methods work.
 
+- Indepedent methods struggle in 3S5Z.
+
+- QVMix can outperform other CTDE methods.
+
+.grid[
 .kol-1-2[
 .center.width-100[3M![](figures/qvmix_3m.png)]
 ]
@@ -740,7 +808,9 @@ $$
 ---
 # QVMix overestimation bias
 
-.center.width-90[![](figures/qvmix_overstim.jpg)]
+Look only blue and green.
+
+.center.width-80[![](figures/qvmix_overstim.jpg)]
 .center.width-100[![](figures/qvmix_overestim_leg.jpg)]
 
 
@@ -748,13 +818,15 @@ $$
 
 ---
 
-# QVMix and QVMix-Max
+# QVMix
+
+- New value based methods for Dec-POMDP:
 
 - Learning $V$ as a target for learning $Q$.
 
-- New value based methods for Dec-POMDP:
-    - Indepent learner: IQV and IQV-Max
-    - CTDE: QVMix and QVMix-Max
+- Indepent learner: .bold[IQV] and .bold[IQV-Max].
+
+- CTDE: .bold[QVMix] and .bold[QVMix-Max].
 
 - Achieve similar and sometimes better performance than QMIX.
 
@@ -768,6 +840,17 @@ class: section
 # IMP-MARL: a Suite of Environments for Large-scale Infrastructure Management Planning via MARL
 
 ---
+# Motivation
+
+- Common benchmarks are games or simulators.
+
+- Need more real-world environments!
+
+- Only few real-world environments and few large-scale environments.
+
+- Infrastructure management planning is an impactful real-world application.
+
+---
 
 # Infrastructure management planning
 
@@ -776,20 +859,35 @@ class: section
     - Wind farms
 
 --
+count: false
 
 - .bold[TASK:] Decide which component needs to be inspected or repaired.
 
 --
+count: false
 
-- .bold[GOAL:] Reduce maintenance cost and failure risks.
+- .bold[GOAL:] Tradeoff between reducing maintenance cost and failure risks.
+
+
 
 --
+count: false
 
 - .bold[CONTRIBUTION:]
-    - Today, solved with expert-based heuristic.
+    - Today, solved with expert-based heuristic,
+    - Not open-sourced,
     - Can (MA)RL solve this problem?
     - Do CTDE methods scale well?
 
+---
+class: middle
+
+.center.width-50[![](figures/imp_intro_light.png)]
+
+
+.footnote[
+P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environments for large-scale infrastructure management planning via MARL. 2023 
+]
 
 
 ---
@@ -920,7 +1018,7 @@ class: middle
 
 # IMP-MARL
 
-- Six new real-world environments.
+- Six new open-source real-world environments.
 
 - CTDE methods can perform better than the expert-based heuristic.
 
@@ -928,6 +1026,7 @@ class: middle
     CTDE $>>$ Decentralised.
 
 --
+count: false
 
 - Remaining challenges:
     - Scalability.
@@ -943,23 +1042,25 @@ class: section
 ---
 # Competition
 
-- In a two player competition:
-    - Agents need to be good against many strategies.
-    - Agents should adapt!
+- Agents need to be good against many strategies.
+- Agents should adapt!
 
 --
+count: false
 
-- How to play chess?
+- How to play Chess?
 
 Agent learns by playing against itself with MCTS - AlphaGo
 
 --
+count: false
 
 - How to play StarCraft 2?
 
 A population of agents play against each other to face many strategies - AlphaStar
 
 --
+count: false
 
 .bold[*Can we use these learning scenario to train teams with CTDE methods?*]
 
@@ -973,9 +1074,22 @@ class: section
 # Value-based CTDE Methods in Symmetric Two-team Markov Game: from Cooperation to Team Competition
 
 ---
+# Motivation
+
+- We want to train teams to be resilient to many opponent strategies.
+
+- Works in 1v1 competition:
+    - Train with single-agent reinforcement learning,
+    - Learning scenarios: train against different opponents.
+
+- Use these approaches with CTDE methods.
+
+---
 # Two team Markov game
 
-- Two symmetric teams, same agents face each other.
+- Two teams.
+
+- Teams are symetric, same agents face each other.
 
 - 2 rewards, one per team $r^j\_t = R^j(s\_{t+1}, s\_t, \mathbf{u\_t})$.
 
@@ -994,10 +1108,12 @@ New Competitive StarCraft Multi-Agent Challenge
 Teams are trained with CTDE methods: QMIX, QVMix and MAVEN.
 
 --
+count: false
 
 Teams are trained with three different learning scenarios:
 
 --
+count: false
 
 1. Against a stationary strategy (.bold[heuristic]) like in a Dec-POMDP.
 
@@ -1029,26 +1145,33 @@ Create groups of teams evaluated together.
 Assign a rating $R$ to compute the probability of winning.
 
 --
+count: false
 
-- Let $R\_A$ and $R\_B$ be the ELO scores of player A and B.
-- Probabilities:
-
-$$
-    E\_A=\frac{10^{R\_A/400}}{10^{R\_A/400} + 10^{R\_B/400}}
-$$
+- Let $R\_A$ and $R\_B$ be the ELO scores of agents A and B.
 
 $$
-    E\_B=\frac{10^{R\_B/400}}{10^{R\_A/400} + 10^{R\_B/400}}
+    E\_A=\frac{10^{R\_A/400}}{10^{R\_A/400} + 10^{R\_B/400}} \text{ and } E\_B=\frac{10^{R\_B/400}}{10^{R\_A/400} + 10^{R\_B/400}}
 $$
 
 --
+count: false
+
+- What if $R_A = 1200$ and $R_B=800$?
+
+    $E_A = 10^3/(10^3+10^2) = 10 / 11$
+
+--
+count: false
 
 Update
 
 $$
-    R'\_A = R\_A + cst \* (S\_A - E\_A)
+    R'\_A = R\_A + 10 \* (S\_A - E\_A)
 $$
+
 - $S\_A$ is equal to $1$ for a win, $0$ for a loss and $0.5$ for a draw.
+
+
 
 ???
 
@@ -1069,20 +1192,29 @@ QVMix in the 3M map:
 
 .center.width-70[![](figures/popu_qvmix.png)]
 
+---
+
+# With the heuristic
+
+.center.width-60[![](figures/popu_qvmix.png)]
+
+.center.width-60[![](figures/popu_qvmix_heuristic.png)]
 
 ---
 class: middle
 
-.center.width-100[![](figures/figures_lesson/2team1.png)]
+.center.width-100[![](figures/2team1.png)]
 
 .footnote[Leroy, P., Pisane, J., Ernst, D. (2022). Value-based CTDE Methods in Symmetric Two-team Markov Game: from Cooperation to Team Competition.]
 
 ---
 class: middle
 
-All together: same conclucion!
+# All together
 
-.center.width-80[![](figures/figures_lesson/2teams3.png)]
+Same conclusion!
+
+.center.width-80[![](figures/2teams3.png)]
 
 .footnote[Leroy, P., Pisane, J., Ernst, D. (2022). Value-based CTDE Methods in Symmetric Two-team Markov Game: from Cooperation to Team Competition.]
 
@@ -1124,12 +1256,50 @@ class: section
 
 - What is (multi-agent) reinforcement learning.
 
-- How to train a team of agents to cooperate.
+--
 
-- How to train a team of agents to compete against several strategies.
+- How to train a team of agents to cooperate:
+    - Centralised training with decentralised execution.
+    - QVMix can be better than QMIX.
+    - Infrastructure management planning, a real-world application.
 
 --
 
+- How to train a team of agents to compete against several strategies.
+    - Train it within a population of learning teams.
+
+--
+count: false
+
 # Reinforcement Learning is not DEAD !
 
-BACKUP SLIDES!
+
+---
+
+# BACKUP
+
+---
+
+# QVMix and QVMix-Max
+
+Take the architecture of $Q$ in QMIX to compute both $Q$ and $V$. 
+
+
+.bold[QVMix:]
+
+$$
+    \mathcal{L}(\theta) = \mathbb{E}\_{\langle . \rangle \sim B}
+    \bigg[\big(r\_{t} + \gamma V(s\_{t+1}; \phi') - Q(s\_{t}, \mathbf{u\_{t}}; \theta)\big)^{2}\bigg]
+$$
+$$
+    \mathcal{L}(\phi) = \mathbb{E}\_{\langle . \rangle\sim B} 
+    \bigg[\big(r\_{t} + \gamma V(s\_{t+1}; \phi') - V(s\_{t}; \phi)\big)^{2}\bigg]
+$$
+
+.bold[QVMix-Max:]
+
+$$
+    \mathcal{L}(\phi) = \mathbb{E}\_{\langle . \rangle\sim B} 
+    \bigg[\big(r\_{t} + \gamma \max\_{\mathbf{u} \in \mathcal{U}} Q(s\_{t+1}, \mathbf{u}; \theta') - V(s\_{t}; \phi)\big)^{2}\bigg]
+$$
+
