@@ -880,7 +880,60 @@ count: false
     - Do CTDE methods scale well?
 
 ---
+# A k-out-of-n system
+
+- Fail if less than k-out-of-n components work.
+
+- In our work, simulated deterioration of a crack size.
+
+
+.center.width-100[![](figures/environments_v2_a_no_leg.png)A 4-out-of-5 system.]
+
+.footnote[
+P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environments for large-scale infrastructure management planning via MARL. 2023 
+]
+
+---
 class: middle
+
+# A component
+.center.width-50[![](figures/imp_intro_compo.png)]
+
+.footnote[
+P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environments for large-scale infrastructure management planning via MARL. 2023 
+]
+
+
+---
+class: middle
+
+# Possible decisions
+
+.center.width-100[![](figures/imp_intro_repair.png)]
+
+--
+count: false
+
+.center.width-100[![](figures/imp_intro_nothing.png)]
+
+--
+count: false
+
+.center.width-100[![](figures/imp_intro_inspect1.png)]
+
+--
+count: false
+
+.center.width-100[![](figures/imp_intro_inspect2.png)]
+
+.footnote[
+P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environments for large-scale infrastructure management planning via MARL. 2023 
+]
+
+---
+class: middle
+
+# The system
 
 .center.width-50[![](figures/imp_intro_light.png)]
 
@@ -921,21 +974,6 @@ $$ \sum\_{t=0}^{T-1} \gamma^t \left[ R\_{t,f}+ \sum\_{a=1}^n \left({R\_{t,ins}^a
 
 encompassing economic, environmental, and societal losses
 
----
-# A k-out-of-n system
-
-- Fail if less than 4-out-of-5 components work.
-
-- In our work, simulated deterioration of a crack size.
-
-- No correlation between parts.
-
-.width-100[![](figures/environments_v2_a.png)]
-
-.footnote[
-P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environments for large-scale infrastructure management planning via MARL. 2023 
-]
-
 
 ---
 
@@ -943,9 +981,11 @@ P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environmen
 
 - One agent decide for one part of the system.
 
-- They all cooperate to maximise the reward.
+- They all cooperate to maximise
 
 $$ \sum\_{t=0}^{T-1} \gamma^t \left[ R\_{t,f}+ \sum\_{a=1}^n \left({R\_{t,ins}^a} + {R\_{t,rep}^a}\right)  \right]$$
+
+- Failure cost is $R\_f = c\_F \times p\_{Fsys}$.
 
 - .bold[GOAL]: Can (MA)RL be better than the heuristic?
 
@@ -1267,6 +1307,7 @@ class: section
 
 - How to train a team of agents to compete against several strategies.
     - Train it within a population of learning teams.
+
 
 --
 count: false
