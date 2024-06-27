@@ -42,6 +42,9 @@ class: section
 
 # Reinforcement learning
 
+???
+
+RL is an agent learning to take decisions to maximise rewards.
 
 ---
 class: middle
@@ -55,15 +58,17 @@ class: middle
 
 ???
 
-To provide some intuitions, let us watch this video of a chicken trained to pick the pink paper.
+In this video, the agent is the chicken.
 
-The chicken has to perform the correct actions to obtain the reward, which is to pick de pink paper.
+Its action is to pick a paper.
 
-We did not explain to the chicken what is the reward.
+If it picks the pink one, it has a reward.
 
-Everytime, its environment changes!
+The environment is where the agent evolve.
 
-The pink paper is moved to another place and the chicken needs to adapt to the changes in the state of its environment to obtain the reward.
+Here, the state of the environment is the papers of different color.
+
+
 
 ---
 class: middle
@@ -124,6 +129,7 @@ It then receives a reward R and start over.
 
 
 ---
+class: middle
 
 ## Chicken environment
 
@@ -146,6 +152,7 @@ Let's look and example
 
 
 ---
+class: middle
 
 ## Chicken environment
 
@@ -160,6 +167,7 @@ $[Left, Right, Up, Down]$]
 ]]
 
 ---
+class: middle
 
 ## Chicken environment
 
@@ -176,6 +184,7 @@ $s_{t+1} = P(s_t, u_t)$
 ]]
 
 ---
+class: middle
 
 ## Chicken environment
 
@@ -199,9 +208,9 @@ $0$ otherwise
 
 ---
 
-## The optimal policy
+## Optimal policy
 
-.center[For each $s=(i, j)$, we want to choose the .bold[best action!]]
+.center[For .bold[each state] $s=(i, j)$, we want to choose the .bold[best action!]]
 
 
 .center[.width-70[![](figures/chicken_env2.png)]]
@@ -215,14 +224,16 @@ Let's think for a second, what is the best action to be made in (3,4) or in (3, 
 
 class: middle
 
-Easy to find the optimal policy, why do we need reinforcement learning?
+Easy to find an optimal policy, why do we need reinforcement learning?
 
 .center[.width-70[![](figures/chicken_env_optimal.png)]]
 
 ---
+<br><br>
+
 ## What knows the agent?
 
-1. It is in the .bold[state (1, 1)] and there are 16 states ($\mathcal{S}$),
+1. It is in the .bold[state (A, 1)] and there are 16 states ($\mathcal{S}$),
 
 2. It has the choice between .bold[four actions] ($\mathcal{U}$).
 
@@ -231,48 +242,49 @@ count: false
 
 It does not know:
 
-- Taking the third action will change the state to (2, 1),
+- Taking the third action will change the state to (B, 1),
 
 --
 count: false
 
-- The reward in (2, 1) is 0.
+- The reward arriving in (B, 1) is 0.
 
 --
 count: false
 
-It needs to .bold[explore], by trials and errors, to learn the optimal policy.
+It needs to .bold[explore], by trials and errors, to learn an optimal policy.
 
 ---
 class:middle, black-slide
 
+.center.width-100[![](figures/drone_control.gif)]
+.center[Drone control]
 
-.center[
-<video controls preload="auto" height="400" width="700">
-  <source src="./figures/drone_control.mp4" type="video/mp4" autoplay="True">
-</video>
-
-Drone control]
-
+.footnote[Kaufmann, E., Bauersfeld, L., Loquercio, A. et al. Champion-level drone racing using deep reinforcement learning, Nature, 2023]
 ---
 class:middle, black-slide
 
 .center[.width-90[![](figures/netflix.png)]
 Content recommendation]
 
+.footnote[ Ehtsham Elahi
+with James McInerney, Nathan Kallus, Dario Garcia Garcia and Justin Basilico,[Reinforcement Learning for Budget Constrained Recommendations](https://netflixtechblog.com/reinforcement-learning-for-budget-constrained-recommendations-6cbc5263a32a), 2022]
+
 ---
 class:middle, black-slide
 
+.center.width-100[![](figures/cube.gif)]
+.center[Robotics]
 
-.center[
-<video controls preload="auto" height="400" width="700">
-  <source src="./figures/cube.mp4" type="video/mp4" autoplay="True">
-</video>Robotics]
+.footnote[Open AI, [Solving Rubik's Cube with a Robot Hand](https://arxiv.org/abs/1910.07113), 2019]
 
 ???
 Provide state and action and reward intuitions.
 
 ---
+<br>
+<br>
+<br>    
 ## Wrap-up
 
 - In RL, an agent learns by interacting in its environment to maximise rewards.
@@ -284,7 +296,7 @@ Provide state and action and reward intuitions.
 --
 count: false
 
-# What if the fox can move?
+## What if the fox can move?
 
 ---
 class: section
@@ -312,17 +324,9 @@ All agents $a\_i \in \{ 1,...,n \}$ learn a policy $\pi^{a}$ to maximise their o
 We still have the transition
 
 ---
-class: middle
+class: middle, red-slide
 
-# **.bold[Rewards depend on actions of all agents]**
-
----
-
-## Cooperation
-
-Two ckicken and two nests.
-
-.center[.width-70[![](figures/chicken_coop.png)]]
+.center.Huge[Rewards depend on actions of all agents]
 
 ---
 
@@ -333,9 +337,18 @@ The fox learns to catch the chicken.
 .center[.width-70[![](figures/chicken_compet.png)]]
 
 ---
+
+## Cooperation
+
+Two chickens and two nests.
+
+.center[.width-70[![](figures/chicken_coop.png)]]
+
+
+---
 ## General-sum
 
-Two chicken, one fox and one donkey.
+Two chickens, one fox and one donkey.
 
 .center[.width-70[![](figures/chicken_env_general_sum.png)]]
 
@@ -362,11 +375,11 @@ class: middle
 
 ## Goal
 
-The agent learns the .bold[policy] $\pi$ mapping a state $s$ to an action $u$ that .bold[maximises]
+The agent learns the .bold[policy] $\pi$ mapping a state $s$ to an action $u$ to .bold[maximise]
 
-$$\mathbb{E}_{\pi} \left[ \sum_t \gamma^t r_t | s_t \right] \forall s.$$
+$$\mathbb{E}_{\pi} \left[ \sum_t \gamma^t r_t | s_t \right] \forall s_t.$$
 
-The discount factor $\gamma \in [0, 1]$ encourages direct reward.
+The discount factor $\gamma \in [0, 1]$ can encourage immediate rewards.
 
 ???
 
@@ -376,6 +389,7 @@ How can I know which is the best action?
 
 
 ---
+<br><br>
 
 ## Policy evaluation
 
@@ -408,6 +422,8 @@ $$ V^{\pi^\*(s)} = \max\_\pi V^{\pi}(s).$$
 
 ---
 
+<br><br>
+
 ## State-action value function
 
 From $s$, taking $u$, what is the expected sum of discounted rewards following $\pi$?
@@ -433,11 +449,13 @@ $$ \pi^\*(s) = \arg\max\_u Q(s, u).$$
 
 ---
 
-## Deep Q Network (DQN)
+<br><br><br>
+
+## Deep Q-Network (DQN)
+
+.footnote[Volodymyr Mnih, Koray Kavukcuoglu, David Silver, Alex Graves, Ioannis Antonoglou, Daan Wierstra, Martin Riedmiller, Playing Atari with Deep Reinforcement Learning, 2013.]
 
 Learn the optimal $Q$ with a neural network of parameters $\theta$.
-
-.footnote[cite]
 
 --
 count:false
@@ -447,9 +465,9 @@ Update by minimising
 $$
 \mathcal{L}(\theta) = \mathbb{E}\_{\langle s\_{t},u\_{t},r\_{t},s\_{t+1} \rangle} \big(r\_{t} + \gamma  \underset{u \in \mathcal{U}}{\max} Q(s\_{t+1}, u; \theta') - Q(s\_{t}, u\_{t}; \theta)\big)^2$$
 
-- $\theta'$ is a copy of $\theta$.
 
 --
+count:false
 
 Transitions obtained by exploring an $\epsilon$-greedy policy.
 
@@ -472,22 +490,30 @@ class: middle
 
 The policy is $\pi(u|\tau)$ where $\tau$ is the history of past observations and actions.
 
-.center[.width-100[![](figures/POMDP.png)]]
+.center[.width-85[![](figures/POMDP.png)]]
 
 
 ???
 
 Oralement RNN 
 
+---
+
+<br><br><br>
+
 ## Wrap-up:
 
 - Agent learns to .bold[maximise] $\mathbb{E}_{\pi} \left[ \sum_t \gamma^t r_t | s_t \right] \forall s\_t$.
 
-- $Q(s\_t, u\_t)$ is the best $\mathbb{E}_{\pi} \left[ \sum_t \gamma^t r_t | s_t, u_t\right]$
+- $Q(s\_t, u\_t)$ is the best $\mathbb{E}_{\pi} \left[ \sum_t \gamma^t r_t | s_t, u_t\right]$.
 
-- Deep Q Network (DQN) is learning $Q(s\_t, u\_t)$ with a neural network.
+- $ \pi^\*(s\_t) = \arg\max\_u Q(s\_t, u) $.
 
-- $ \pi^\*(s\_t) = \arg\max\_u Q(s\_t, u) $
+- Deep Q-Network (DQN) is learning $Q(s\_t, u\_t)$ with a neural network.
+
+- If the environment is partially observable, decision based on the history $\tau$.
+
+
 
 ---
 class: section
@@ -508,7 +534,7 @@ class: middle
 A single reward for all agents
 
 $$
-r^{a\_1}\_t = r^{a\_n}\_t=r\_t
+r^{a\_1}\_t = r^{a\_n}\_t=r\_t.
 $$
 
 .center.width-85[![](figures/decpomdp.png)]
@@ -535,13 +561,13 @@ class: middle, black-slide
 
 ## StarCraft Multi-Agent Challenge (SMAC)
 
-3M animate
+3M
+.center.width-75[![](figures/3m.gif)]
 
-.center.width-75[![](figures/3m.png)]
+3S5Z
+.center.width-75[![](figures/3s5z.gif)]
 
-3S5Z animate
-
-.center.width-75[![](figures/3s5z.png)]
+.footnote[Samvelyan, M., Rashid, T., De Witt, C. S., Farquhar, G., Nardelli, N., Rudner, T. G., ...  Whiteson, S, [The starcraft multi-agent challenge.](https://github.com/oxwhirl/smac), 2019.]
 
 
 ???
@@ -556,7 +582,7 @@ class: middle, black-slide
 .center.width-75[![](figures/smac_obs.png)]
 .center[SMAC observation and attack ranges]
 
-.footnote[https://github.com/oxwhirl/smac  Samvelyan, M., Rashid, T., De Witt, C. S., Farquhar, G., Nardelli, N., Rudner, T. G., ...  Whiteson, S. (2019). The starcraft multi-agent challenge.]
+.footnote[Samvelyan, M., Rashid, T., De Witt, C. S., Farquhar, G., Nardelli, N., Rudner, T. G., ...  Whiteson, S, [The starcraft multi-agent challenge.](https://github.com/oxwhirl/smac), 2019.]
 
 
 ---
@@ -565,6 +591,8 @@ class: middle
 # How to control agents?
 
 ---
+
+<br><br><br><br>
 ## Centralised controller
 
 --
@@ -576,14 +604,19 @@ One agent learn $Q(s_t, \mathbf{u\_t})$ where $\mathbf{u\_t} = (u^1_t,..,u^n_t)$
 --
 count: false
 
-.bold[Problems:]
+.bold[Problems]
 
 - $|\mathcal{U}\_1 \times ... \times \mathcal{U}\_n|$,
 
 - Partial observability?
 
+???
+
+More on partial observability.
+
 
 ---
+<br><br><br><br>
 
 ##  Decentralised controller
 
@@ -592,15 +625,16 @@ Each agent learns independently $Q\_a(\tau^a\_t, u^a\_t)$.
 --
 count:false
 
-.bold[Problems:]
+.bold[Problems]
 
 - Non-stationarity,
 
-- credit assessment.
+- credit assignment.
 
 
 
 ---
+<br><br>
 
 ## Centralised training with decentralised execution (CTDE)
 
@@ -623,6 +657,7 @@ At execution:
 
 
 ---
+<br>
 
 ## CTDE Value-based methods
 
@@ -652,9 +687,11 @@ $$
 
 ---
 
+<br><br>
+
 ## Individual Global Max
 
-$ \underset{u^a\_t}{\arg\max} Q\_a(\tau^a\_t, u^a\_t)$ maximise $Q(s\_t, \mathbf{u\_t}). $
+$ \underset{u^a\_t}{\arg\max} Q\_a(\tau^a\_t, u^a\_t)$ maximises $Q(s\_t, \mathbf{u\_t}). $
 
 --
 count: false
@@ -668,7 +705,7 @@ count: false
 --
 count: false
 
-- Follow the Deep Q Network algorithm
+- Follow the Deep Q-Network algorithm
 $$
     \mathcal{L}(\theta) = \mathbb{E}\_{ \langle . \rangle  }
     \bigg[  \big(r\_{t} + \gamma \underset{\mathbf{u} \in \mathcal{U}}{\max} Q(s\_{t+1}, \mathbf{u}; \theta') - Q(s\_{t}, \mathbf{u\_{t}}; \theta)\big)^{2} \bigg]
@@ -684,7 +721,7 @@ Question: How to satisfy IGM?
 
 Non-linear factorisation of $Q(s\_t, \mathbf{u\_t})$.
 
-.footnote[Rashid, T., Samvelyan, M., Schroeder, C., Farquhar, G., Foerster, J., Whiteson, S. (2018). Qmix: Monotonic value function factorisation for deep multi-agent reinforcement learning.]
+.footnote[Rashid, T., Samvelyan, M., Schroeder, C., Farquhar, G., Foerster, J., Whiteson, S, QMIX: Monotonic value function factorisation for deep multi-agent reinforcement learning, 2018.]
 
 --
 count: false
@@ -701,26 +738,27 @@ count: false
 ---
 class: middle
 
-## Are there better methods than Deep Q Network to learn $Q(s, u)$?
+## Are there better methods than Deep Q-Network to learn $Q(s, u)$?
 
 ---
+<br>
 ## Deep Quality-Value
 
 .footnote[M. Sabatelli, G. Louppe, P. Geurts, and M. A. Wiering. Deep quality-value (DQV)
 learning. 2018]
 
-Deep Q Network:
+Deep Q-Network:
 $$
     \mathcal{L}(\theta) = \mathbb{E}\_{\langle s\_{t},u\_{t},r\_{t},s\_{t+1}\rangle }
-    \bigg[ \big(r\_{t} + \gamma \max\_{u \in \mathcal{U}} Q(s\_{t+1}, u; \theta') - Q(s\_{t}, u\_{t}; \theta)\big)^{2}\bigg]
+    \bigg[ \big(r\_{t} + \gamma \max\_{u \in \mathcal{U}} Q(s\_{t+1}, u; \theta') - Q(s\_{t}, u\_{t}; \theta)\big)^{2}\bigg].
 $$
-
-Motivation:
 
 --
 count:false
 
-$$ V(s\_{t+1}) =\max\_{u} Q(s\_{t+1}, u; \theta')$$
+Motivation&#58;
+
+$$ V(s\_{t+1}) =\max\_{u} Q(s\_{t+1}, u; \theta').$$
 
 --
 count:false
@@ -728,29 +766,28 @@ count:false
 Learn $Q(.;\theta)$ and $V(.;\phi)$ at the same time.
 
 $$
-\mathcal{L}(\theta) = \mathbb{E}\_{\langle s\_t,u\_t,r\_t,s\_{t+1}\rangle} \bigg[ \big(r\_t + \gamma V(s\_{t+1}; \phi') - Q(s\_t, u\_t; \theta) \big)^{2} \bigg]
+\mathcal{L}(\theta) = \mathbb{E}\_{\langle s\_t,u\_t,r\_t,s\_{t+1}\rangle} \bigg[ \big(r\_t + \gamma V(s\_{t+1}; \phi') - Q(s\_t, u\_t; \theta) \big)^{2} \bigg],
 $$
 
 --
 
 $$
-\mathcal{L}(\phi) = \mathbb{E}\_{\langle  s\_{t},u\_{t},r\_{t},s\_{t+1}  \rangle} \bigg[\big(r\_{t} + \gamma V(s\_{t+1}; \phi') - V(s\_{t}; \phi)\big)^{2}\bigg]
+\mathcal{L}(\phi) = \mathbb{E}\_{\langle  s\_{t},u\_{t},r\_{t},s\_{t+1}  \rangle} \bigg[\big(r\_{t} + \gamma V(s\_{t+1}; \phi') - V(s\_{t}; \phi)\big)^{2}\bigg].
 $$
 
 --
 count: false
 
 ---
-# CONTRIBUTION
 
 .center.width-100[![](figures/qvmix_paper.png)]
 
 ---
 class: middle
 
-## Motivations
+## Motivation
 
-- Deep Quality-Value outperform Deep Q Network.
+- Deep Quality-Value outperform Deep Q-Network.
 
 - Can we improve QMIX by learning both $Q$ and $V$?
 
@@ -772,6 +809,7 @@ $$
 $$
 
 
+.center.width-40[![](figures/v_mix.png)]
 
 
 ---
@@ -779,7 +817,7 @@ class: middle
 
 ## Experiments
 
-- In 3M, every methods work.
+- In 3M, all methods work.
 
 - In 3S5Z:
     - Indepedent methods struggle,
@@ -803,10 +841,8 @@ class: middle
 
 ## Overestimation bias
 
-Look only blue and green.
-
-.center.width-80[![](figures/qvmix_overstim.jpg)]
-.center.width-100[![](figures/qvmix_overestim_leg.jpg)]
+.center.width-80[![](figures/qvmix_overstim.png)]
+.center.width-100[![](figures/qvmix_overestim_leg.png)]
 
 
 .footnote[Leroy, P., Ernst, D., Geurts, P., Louppe, G., Pisane, J.,  Sabatelli, M. (2020). QVMix and QVMix-Max: Extending the Deep Quality-Value Family of Algorithms to Cooperative Multi-Agent Reinforcement Learning.]
@@ -824,30 +860,30 @@ class: middle
 
 - CTDE: .bold[QVMix] and .bold[QVMix-Max].
 
-- Achieve similar and sometimes better performance than QMIX.
+- QVMix achieves similar and sometimes better performance than QMIX.
 
 - Reduce the overestimation bias.
 
 ---
-# CONTRIBUTION
 
 .center.width-100[![](figures/imp_marl_paper.png)]
 
 ---
 class: middle
-## Motivations
+## Motivation
 
-- Common benchmarks are games or simulators.
+Common benchmarks are .red[games] or .red[simulators].
 
-- Need more real-world environments!
+Only .red[few real-world] environments and .red[few large-scale] environments.
 
-- Only few real-world environments and few large-scale environments.
-
-- Infrastructure management planning is an impactful real-world application.
-
-- Not many open-sourced contributions.
+.bold[Infrastructure management planning]
+- An impactful .green[real-world ] application.
+- Allows .green[large-scale] environments.
+- .green[Open-sourced contribution].
 
 ---
+
+class: middle
 
 ## Infrastructure management planning
 
@@ -855,42 +891,29 @@ class: middle
     - Bridges
     - Wind farms
 
---
-count: false
-
-- .bold[TASK:] Decide which component needs to be inspected or repaired.
-
---
-count: false
+- Decide which component needs to be inspected or repaired.
 
 - Tradeoff between reducing maintenance costs and failure risks.
 
+- Today, solved with expert-based heuristic.
 
-
---
-count: false
-
-- .bold[CONTRIBUTIONS:]
-    - Today, solved with expert-based heuristic,
-    - Can (MA)RL solve this problem?
-    - Do CTDE methods scale well?
 
 ---
+<br>
+
 ## A k-out-of-n system
 
-- Fail if less than k-out-of-n components are opertionnal.
+Fail if less than k-out-of-n components are opertionnal.
 
 
 --
 count: false
 
-A 4-out-of-5 system:
 
 .center.width-100[![](figures/environments_v2_a_no_leg.png)]
+.center[A 4-out-of-5 system.]
 
-.footnote[
-P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environments for large-scale infrastructure management planning via MARL. 2023 
-]
+.footnote[P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environments for large-scale infrastructure management planning via MARL. 2023]
 
 ---
 class: middle
@@ -901,25 +924,24 @@ In our work, probability on a crack size.
 
 .center.width-50[![](figures/imp_intro_compo.png)]
 
-.footnote[
-P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environments for large-scale infrastructure management planning via MARL. 2023 
-]
+.footnote[P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environments for large-scale infrastructure management planning via MARL. 2023]
 
+???
+
+VALEURS DE BIN
 
 ---
 
 ## Possible decisions
 
-.footnote[
-P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environments for large-scale infrastructure management planning via MARL. 2023 
-]
+.footnote[P Leroy, PG Morato, J Pisane, A Kolios, D Ernst. IMP-MARL: a suite of environments for large-scale infrastructure management planning via MARL. 2023]
 
-.center.width-100[![](figures/imp_intro_repair.png)]
+.center.width-100[![](figures/imp_intro_nothing.png)]
 
 --
 count: false
 
-.center.width-100[![](figures/imp_intro_nothing.png)]
+.center.width-100[![](figures/imp_intro_repair.png)]
 
 --
 count: false
@@ -981,6 +1003,7 @@ encompassing economic, environmental, and societal losses
 
 
 ---
+class:middle
 
 ## How to solve with (MA)RL?
 
@@ -995,7 +1018,7 @@ $$ \sum\_{t=0}^{T-1} \gamma^t \left[ R\_{t,f}+ \sum\_{a=1}^n \left({R\_{t,ins}^a
 - .bold[GOAL]: Can (MA)RL be better than the heuristic?
 
 ---
-
+class:middle
 ## How much better than the heuristic?
 
 Normalised boxplot against the expert rule-based heuristic policy.
@@ -1004,7 +1027,7 @@ Normalised boxplot against the expert rule-based heuristic policy.
 .center.width-60[![](figures/plot_explain_bottom.png)]
 
 ---
-
+class:middle
 ## QMIX in the k-out-of-n system.
 
 - $n$: from 3 to 100 agents.
@@ -1091,6 +1114,8 @@ class: section
 # How to train a team to compete against many strategies?
 
 ---
+<br>
+
 ## Competition
 
 - Agents need to be good against many strategies.
@@ -1118,14 +1143,12 @@ count: false
 ---
 class:middle
 
-# CONTRIBUTION
-
 .center.width-100[![](figures/two_team_paper.png)]
 
 ---
 class: middle
 
-## Motivations
+## Motivation
 
 - We want to train teams to be resilient against many strategies.
 
@@ -1149,16 +1172,20 @@ class: middle
 - The goal of each agent $a\_{i, j}$ is to maximize $\sum\_{t} \gamma^t r^{j}\_t$.
 
 ---
-class: middle
+class: middle, black-slide
 
 ## New Competitive StarCraft Multi-Agent Challenge
 
-.center.width-50[3M![](figures/3m.png)]
+3M
+.center.width-75[![](figures/3m_compet.gif)]
 
-.center.width-50[3S5Z![](figures/3s5z.png)]
+3S5Z
+.center.width-75[![](figures/3s5z_compet.gif)]
 
 
 ---
+<br>
+
 ## The empirical study
 
 Teams are trained with .bold[CTDE methods]:
@@ -1197,6 +1224,7 @@ class: middle
 Evaluate teams against many strategies in groups.
 
 ---
+<br><br>
 ## Elo score
 
 Compute the probability of winning between two individuals.
@@ -1210,9 +1238,10 @@ $$
     E\_A=\frac{10^{R\_A/400}}{10^{R\_A/400} + 10^{R\_B/400}} \text{ and } E\_B=\frac{10^{R\_B/400}}{10^{R\_A/400} + 10^{R\_B/400}}
 $$
 
-- If $R_A = 1200$ and $R_B=800$?
+--
+count: false
 
-    $E_A = 10^3/(10^3+10^2) = 10 / 11$
+- If $R_A = 1200$ and $R_B=800$,  $E_A = 10^3/(10^3+10^2) = 10 / 11$.
 
 --
 count: false
@@ -1243,33 +1272,32 @@ Group teams by training method.
 - .bold[P] = within a population,
 - .bold[BP] = the 10 bests of each population.
 
-QVMix in the 3M map:
+
 
 .center.width-70[![](figures/popu_qvmix.png)]
+.center[QVMix in the 3M map.]
 
 ---
 
 ## The heuristic in the evaluation group
 
 .center.width-60[![](figures/popu_qvmix.png)]
-
 .center.width-60[![](figures/popu_qvmix_heuristic.png)]
+.center[QVMix in the 3M map.]
 
 ---
 class: middle
 
 .center.width-100[![](figures/2team1.png)]
+.center[All methods in the 3M map.]
 
 .footnote[Leroy, P., Pisane, J., Ernst, D. (2022). Value-based CTDE Methods in Symmetric Two-team Markov Game: from Cooperation to Team Competition.]
 
 ---
 class: middle
 
-## All in one group
-
-Same conclusion!
-
 .center.width-100[![](figures/2teams3.png)]
+.center[All methods in one evaluation group in the 3M map.]
 
 .footnote[Leroy, P., Pisane, J., Ernst, D. (2022). Value-based CTDE Methods in Symmetric Two-team Markov Game: from Cooperation to Team Competition.]
 
@@ -1279,6 +1307,7 @@ class: middle
 ## The heuristic is the best in the 3S5Z map.
 
 .center.width-100[![](figures/3s5z_tiny_all_h_clean.png)]
+.center[All methods in one evaluation group in the 3S5Z map.]
 
 .footnote[Leroy, P., Pisane, J., Ernst, D. (2022). Value-based CTDE Methods in Symmetric Two-team Markov Game: from Cooperation to Team Competition.]
 
@@ -1325,7 +1354,7 @@ class: section
 --
 count: false
 
-# Reinforcement Learning is not DEAD !
+# Reinforcement learning can solve real-world problems!
 
 
 ---
@@ -1357,3 +1386,44 @@ $$
     \bigg[\big(r\_{t} + \gamma \max\_{\mathbf{u} \in \mathcal{U}} Q(s\_{t+1}, \mathbf{u}; \theta') - V(s\_{t}; \phi)\big)^{2}\bigg]
 $$
 
+---
+
+## QVMix and QVMix-Max results
+
+.center.width-60[![](figures/all_win.png)]
+
+---
+## IMP-MARL model
+
+$$
+d\_{t+1} =\bigg[ \Big(1-\frac{m}{2}\Big) C\_{FM}S\_{R}^m\pi ^{m/2}n\_{S} + d\_t^{1-m/2}\bigg] ^{2/(2-m)}   ,
+$$
+
+---
+class: middle
+
+## IMP-MARL
+.center.width-100[![](figures/boxplot_perc_limit_up.png)]
+
+---
+class: middle
+
+## IMP-MARL
+.center.width-100[![](figures/boxplot_perc_limit_down.png)]
+
+---
+class: middle
+
+## Two-Team 3M
+.center.width-100[![](figures/tiny_perf_self_popu.png)]
+.center.width-100[![](figures/tiny_heuristic_plot_qvmixmavenqmix.png)]
+.center[QVMix - MAVEN - QMIX]
+
+---
+class: middle
+
+## Two-Team 3S5Z
+
+.center.width-100[![](figures/3s5z_tiny_perf_self_popu.png)]
+.center.width-100[![](figures/3s5z_tiny_heuristic_plot_qvmixmavenqmix.png)]
+.center[QVMix - MAVEN - QMIX]
