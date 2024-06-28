@@ -718,7 +718,7 @@ Question: How to satisfy IGM?
 ---
 ## QMIX
 
-Non-linear factorisation of $Q(s\_t, \mathbf{u\_t})$.
+Non-linear factorisation of $Q(s\_t, \mathbf{u\_t})$ with monotonicity.
 
 .footnote[Rashid, T., et al. QMIX: Monotonic value function factorisation for deep multi-agent reinforcement learning, 2018.]
 
@@ -726,7 +726,7 @@ Non-linear factorisation of $Q(s\_t, \mathbf{u\_t})$.
 count: false
 
 $$
-    \frac{\partial Q(s\_t, \mathbf{u\_t})}{\partial Q\_{a}(\tau^{a}\_t, u\_t^{a})} \geq 0 \text{ } \forall a \in \{a\_1,..,a\_n\}
+    \frac{\partial Q(s\_t, \mathbf{u\_t})}{\partial Q\_{a}(\tau^{a}\_t, u\_t^{a})} \geq 0 \text{ } \forall a
 $$
 
 --
@@ -798,11 +798,11 @@ class: middle
 Take the architecture of $Q$ in QMIX to compute both $Q$ and $V$. 
 
 $$
-    \mathcal{L}(\theta) = \mathbb{E}\_{\langle . \rangle }
+    \mathcal{L}(\theta) = \mathbb{E}\_{\langle s\_{t},\mathbf{u\_{t}},r\_{t},s\_{t+1}\rangle}
     \bigg[\big(r\_{t} + \gamma V(s\_{t+1}; \phi') - Q(s\_{t}, \mathbf{u\_{t}}; \theta)\big)^{2}\bigg]
 $$
 $$
-    \mathcal{L}(\phi) = \mathbb{E}\_{\langle . \rangle} 
+    \mathcal{L}(\phi) = \mathbb{E}\_{\langle s\_{t},\mathbf{u\_{t}},r\_{t},s\_{t+1}\rangle} 
     \bigg[\big(r\_{t} + \gamma V(s\_{t+1}; \phi') - V(s\_{t}; \phi)\big)^{2}\bigg]
 $$
 
@@ -877,7 +877,7 @@ Only .red[few real-world] environments and .red[few large-scale] environments.
 .bold[Infrastructure management planning]
 - An impactful .green[real-world ] application.
 - Allows .green[large-scale] environments.
-- .green[Open-sourced contribution].
+- Need more .green[open-source contributions].
 
 ---
 
@@ -885,7 +885,7 @@ class: middle
 
 ## Infrastructure management planning
 
-- Maintain a system composed of different parts.
+- Maintain a system composed of different components.
     - Bridges
     - Wind farms
 
@@ -1014,8 +1014,6 @@ Normalised boxplot against the expert rule-based heuristic policy.
 
 .center.width-60[![](figures/plot_explain_top.png)]
 
---
-
 .center.width-60[![](figures/plot_explain_bottom.png)]
 
 ---
@@ -1093,7 +1091,7 @@ class: middle
 
 - CTDE methods can perform better than the expert-based heuristic.
 
-- IMP environments demand cooperation among agents.
+- Infrastructure management planning demands cooperation among agents.
 
 - Remaining challenges:
     - Scalability.
