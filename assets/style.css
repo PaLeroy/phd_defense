@@ -74,7 +74,7 @@ a:hover {
     color: #d11a01;
 }
 
-.Q, .green {
+.green {
     color: #009933;
 }
 
@@ -87,7 +87,7 @@ a:hover {
 }
 
 em {
-    color: #0288d1;
+    color: #17525d;
     font-style: normal;
 }
 
@@ -119,6 +119,11 @@ strong {
 
 .smaller-xxx {
     font-size: 0.4em;
+}
+
+.Huge{
+    font-size: 3em;
+    font-weight: bold;
 }
 
 .katex {
@@ -450,7 +455,7 @@ td {
     width: 200%;
 }
 
-
+ 
 /* Specials ----------------------------------------------------------------- */
 
 .title-slide:after {

@@ -579,7 +579,7 @@ More details on the setting
 class: middle, black-slide
 
 .center.width-75[![](figures/smac_obs.png)]
-.center[SMAC observation and attack ranges]
+.center[SMAC observation and attack ranges.]
 
 .footnote[Samvelyan, et al. [The starcraft multi-agent challenge.](https://github.com/oxwhirl/smac), 2019.]
 
